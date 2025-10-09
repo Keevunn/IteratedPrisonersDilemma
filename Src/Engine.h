@@ -37,18 +37,17 @@ namespace Engine {
 
         void parseArgs(int argc, char* argv[]);
         static void validateFormat(std::string_view format);
-        //void validatePayoffs(); // TODO Use formula T > R > P > S and 2R > T + S
+        void validatePayoffs(const std::string_view& param) const; // TODO Use formula T > R > P > S and 2R > T + S
         //void validateStrategies(); // TODO Use std::map ...
         static ArgTypes validateArg(std::string_view arg); // TODO Use std::map and enum for parsing of flags + validation
 
         template<typename T> requires std::is_arithmetic_v<T>
-        T parseParam(std::string_view param) const{
+        T parseParam(const std::string_view& param, const std::string&& arg) const{
             auto first = param.begin(); auto last = param.end();
             T value{};
 
-            auto res = std::from_chars(first, last, value);
-            if (res.ec != std::errc())
-                throw std::invalid_argument("Invalid parameter: " + std::string(param));
+            if (auto res = std::from_chars(first, last, value); res.ec != std::errc() || res.ptr != last)
+                throw std::invalid_argument("Invalid parameter for " + arg + " argument: " + std::string(param));
             return value;
         }
 

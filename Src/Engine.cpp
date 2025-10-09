@@ -15,16 +15,13 @@ namespace Engine {
 
             switch (arg) {
                 case ArgTypes::ROUNDS:
-                    rounds = parseParam<int>(args[++i]);
-                    break;
+                    rounds = parseParam<int>(args[++i], "--rounds"); break;
                 case ArgTypes::REPEATS:
-                    repeats = parseParam<int>(args[++i]);
-                    break;
+                    repeats = parseParam<int>(args[++i], "--repeats"); break;
                 case ArgTypes::SEED:
-                    seed = parseParam<int>(args[++i]);
-                    break;
+                    seed = parseParam<int>(args[++i], "--seed"); break;
                 case ArgTypes::EPSILON:
-                    epsilon = parseParam<float>(args[++i]); break;
+                    epsilon = parseParam<float>(args[++i], "--epsilon"); break;
                 case ArgTypes::PAYOFFS:
                     // TODO validatePayoffs()
                     break;
@@ -44,14 +41,14 @@ namespace Engine {
                     shouldEvolve = true;
                     if (std::strcmp(&args[i+1].at(0), "1") == 0) i += 1;
                     else if (std::strcmp(&args[i+1].at(0), "-") != 0)
-                        throw std::invalid_argument("Invalid argument: " + std::string(args[i+1]));
+                        throw std::invalid_argument("Invalid parameter for --evolve argument: " + std::string(args[i+1]) + "\nUse --evolve 1 or --evolve to enable evolution");
                     break;
                 case ArgTypes::POPULATION:
-                    population = parseParam<int>(args[++i]); break;
+                    population = parseParam<int>(args[++i], "--population"); break;
                 case ArgTypes::GENERATIONS:
-                    generations = parseParam<int>(args[++i]); break;
+                    generations = parseParam<int>(args[++i], "--generations"); break;
                 case ArgTypes::MUTATION:
-                    mutation = parseParam<float>(args[++i]); break;
+                    mutation = parseParam<float>(args[++i], "--mutation"); break;
 
             }
         }
@@ -68,8 +65,16 @@ namespace Engine {
 
     void Engine::validateFormat(std::string_view format) {
         if (format != "text" && format != "csv" && format != "json")
-            throw std::invalid_argument("Invalid format: " + std::string(format));
+            throw std::invalid_argument("Invalid parameter for --format argument: " + std::string(format) + "\nUse --format {text | csv | json}");
     }
+
+    void Engine::validatePayoffs(const std::string_view &param) const {
+        auto first = param.begin(); auto last = param.end();
+        float value{};
+        auto res = std::from_chars(first, last, value);
+
+    }
+
 
 
 };
