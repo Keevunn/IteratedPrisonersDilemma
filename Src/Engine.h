@@ -35,15 +35,34 @@ namespace Engine {
             {"--mutation", ArgTypes::MUTATION}
         };
 
+        enum class StrategyTypes{
+            ALLC,ALLD,TFT,GRIM,PAVLOV,RND03,CONTRITE,PROBER
+        };
+
+        inline static const std::unordered_map<std::string_view, StrategyTypes> strategyMap = {
+            {"ALLC", StrategyTypes::ALLC},
+            {"ALLD", StrategyTypes::ALLD},
+            {"TFT", StrategyTypes::TFT},
+            {"GRIM", StrategyTypes::GRIM},
+            {"PAVLOV", StrategyTypes::PAVLOV},
+            {"RNDO.3", StrategyTypes::RND03},
+            {"CONTRITE", StrategyTypes::CONTRITE},
+            {"PROBER", StrategyTypes::PROBER}
+        };
+
         void parseArgs(int argc, char* argv[]);
+        static ArgTypes validateArg(std::string_view arg);
         static void validateFormat(std::string_view format);
-        void validatePayoffs(const std::string_view& param) const; // TODO Use formula T > R > P > S and 2R > T + S
-        //void validateStrategies(); // TODO Use std::map ...
-        static ArgTypes validateArg(std::string_view arg); // TODO Use std::map and enum for parsing of flags + validation
+        void validatePayoffs(const std::string_view& param);
+        void parseStrategies(const std::string_view& param);
+        static StrategyTypes validateStrategies(const std::string_view& strategy);
+        void validateFileName(const std::string_view& fileName);
+        bool fileExists(const std::string_view& fileName);
+
 
         template<typename T> requires std::is_arithmetic_v<T>
         T parseParam(const std::string_view& param, const std::string&& arg) const{
-            auto first = param.begin(); auto last = param.end();
+            auto first = param.data(); auto last = param.data()+param.size();
             T value{};
 
             if (auto res = std::from_chars(first, last, value); res.ec != std::errc() || res.ptr != last)
@@ -60,7 +79,7 @@ namespace Engine {
         std::string format = "text";
         std::string fileName;
         std::array<float, 4> payoffs = {5, 3, 1, 0};
-        std::vector<std::string> strategies;
+        std::vector<StrategyTypes> strategies;
 
         // Flags
         bool shouldSave = false;
