@@ -1,9 +1,13 @@
 #include <iostream>
-
-#include "Engine.h"
-using namespace std;
+#include "IPD_lib/include/Engine.h"
 
 int main(int argc, char* argv[]) {
-    Engine::Engine engine(argc, argv);
-    return 0;
+    try {
+        Engine e(argc, argv);
+        std::cout << "Engine initialized successfully\n";
+    }
+    catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+        return 1;
+    }
 }

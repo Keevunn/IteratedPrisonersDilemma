@@ -99,6 +99,8 @@ void Engine::validatePayoffs(const std::string_view &param) {
     }
     payoffs[i] = value; // Add last element
 
+    if (i < 3)
+        throw std::invalid_argument("Invalid number of parameters for --payoffs argument: " + std::string(param) + "\nUse --payoffs T,R,P,S where T,R,P,S are positive values, integral or floating-point types, each seperated by commas");
     if (!(payoffs[0] > payoffs[1] && payoffs[1] > payoffs[2] && payoffs[2] > payoffs[3]))
         throw std::invalid_argument("Invalid parameter for --payoffs argument: " + std::string(param) + "\nUse --payoffs T,R,P,S where T > R > P > S");
     if (!(2 * payoffs[1] > payoffs[0] + payoffs[3]))

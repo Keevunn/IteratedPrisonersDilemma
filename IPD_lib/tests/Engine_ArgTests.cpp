@@ -1,6 +1,6 @@
 #include <fstream>
 #include <gtest/gtest.h>
-#include "../IPD_lib/include/Engine.h"
+#include "../include/Engine.h"
 
 // Helper to build argc/argv from vector<string>
 static void runArgs(const std::vector<std::string_view>& args) {

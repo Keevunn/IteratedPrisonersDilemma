@@ -51,7 +51,7 @@ class Engine {
             {"TFT", StrategyTypes::TFT},
             {"GRIM", StrategyTypes::GRIM},
             {"PAVLOV", StrategyTypes::PAVLOV},
-            {"RNDO.3", StrategyTypes::RND03},
+            {"RND0.3", StrategyTypes::RND03},
             {"CONTRITE", StrategyTypes::CONTRITE},
             {"PROBER", StrategyTypes::PROBER}
         };
