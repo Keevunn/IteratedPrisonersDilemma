@@ -7,10 +7,16 @@
 #include <unordered_map>
 #include <vector>
 
-namespace Engine {
-    class Engine {
+
+class Engine {
     public:
-        Engine(int argc, char* argv[]) {parseArgs(argc, argv);};
+        Engine(int argc, char* argv[]) {
+            std::vector<std::string_view> args(argv + 1, argv + argc);
+            parseArgs(args);
+        };
+        explicit Engine(const std::vector<std::string_view>& args) {
+            parseArgs(args);
+        }
         Engine() = default;
     private:
         enum class ArgTypes{
@@ -50,14 +56,15 @@ namespace Engine {
             {"PROBER", StrategyTypes::PROBER}
         };
 
-        void parseArgs(int argc, char* argv[]);
+        void parseArgs(const std::vector<std::string_view>& args);
         static ArgTypes validateArg(std::string_view arg);
         static void validateFormat(std::string_view format);
         void validatePayoffs(const std::string_view& param);
         void parseStrategies(const std::string_view& param);
         static StrategyTypes validateStrategies(const std::string_view& strategy);
-        void validateFileName(const std::string_view& fileName);
-        bool fileExists(const std::string_view& fileName);
+        static void validateFileName(const std::string_view& fileName);
+        static void saveConfig(const std::string_view& fileName, const std::vector<std::string_view>& args);
+        void loadConfig(const std::string_view& fileName);
 
 
         template<typename T> requires std::is_arithmetic_v<T>
@@ -77,13 +84,10 @@ namespace Engine {
         float epsilon{};
 
         std::string format = "text";
-        std::string fileName;
         std::array<float, 4> payoffs = {5, 3, 1, 0};
         std::vector<StrategyTypes> strategies;
 
         // Flags
-        bool shouldSave = false;
-        bool shouldLoad = false;
         bool shouldEvolve = false;
 
         // Evolution params (only if shouldEvolve)
@@ -91,5 +95,4 @@ namespace Engine {
         int generations = 50;
         float mutation = 0.01;
 
-    };
-}
+};
