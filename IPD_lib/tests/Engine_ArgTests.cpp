@@ -4,7 +4,7 @@
 
 // Helper to build argc/argv from vector<string>
 static void runArgs(const std::vector<std::string_view>& args) {
-    Engine e(args);
+    Engine::Engine e(args);
 }
 
 // --------------------------- VALID CASES ---------------------------

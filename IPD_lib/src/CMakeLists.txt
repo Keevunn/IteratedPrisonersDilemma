@@ -1,6 +1,8 @@
 file(GLOB HEADER_LIST
         CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/*.h")
-add_library(IPD_library Engine.cpp ${HEADER_LIST})
+file(GLOB SOURCE_LIST
+        CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/*.cpp")
+add_library(IPD_library ${HEADER_LIST} ${SOURCE_LIST})
 
 target_include_directories(IPD_library PUBLIC include)
 target_compile_features(IPD_library PUBLIC cxx_std_20)

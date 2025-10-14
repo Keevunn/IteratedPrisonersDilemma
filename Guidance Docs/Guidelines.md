@@ -216,7 +216,7 @@ Start with Cooperate (C) and keep cooperating until the opponent defects once. A
 switch to Defect (D) forever. No forgiveness.
 ---
 **Behaviour:**
-- Round 1: Play C. 
+- **Round 1:** Play C. 
 - If opponent always plays C: GRIM keeps playing C forever (stable cooperation). 
 - If opponent defects once: GRIM switches to D permanently.
 ---
@@ -250,67 +250,54 @@ payoffs.
 👉 In short, **GRIM represents “harsh justice”**: cooperation is maintained by the threat of eternal punishment, but
 it collapses easily in imperfect environments.
 
-Strategy: PAVLOV — Win-Stay, Lose-Shift
-Idea:
-Repeat the last move if it gave a “good” payoff (Win = stay).
-Switch the last move if it gave a “bad” payoff (Lose = shift).
-It adapts quickly, seeking payoffs better than mutual defection.
+### Strategy: _PAVLOV — Win-Stay, Lose-Shift_
+**Idea:**
+- Repeat the last move if it gave a “good” payoff (Win = stay).
+- Switch the last move if it gave a “bad” payoff (Lose = shift).
+- It adapts quickly, seeking payoffs better than mutual defection.
+---
+**Behaviour:**
 
-Behaviour:
+- **Round 1:** Often starts with C (convention, though not strictly defined).
 
-Round 1: Often starts with C (convention, though not strictly defined).
-
-Rule:
-
-If the last outcome was CC (R) or DD (P) → stay with same choice.
-
-If the last outcome was CD (S) or DC (T) → switch choice next time.
-
-First few rounds (examples):
-
-vs ALLC:
+- **Rule:**
+  - If the last outcome was CC (R) or DD (P) → stay with same choice.
+  - If the last outcome was CD (S) or DC (T) → switch choice next time.
+---
+**First few rounds (examples):**
+- **vs ALLC:** \
 → Starts C → CC (R, good) → keeps C → CC forever. Stable mutual cooperation.
-
-vs ALLD:
-→ Round 1: C vs D → CD (S, bad) → switches to D.
+- **vs ALLD:** \
+→ Round 1: C vs D → CD (S, bad) → switches to D. \
 → Round 2: D vs D → DD (P, acceptable) → stays with D forever. Stable mutual defection.
-
-vs TFT:
+- **vs TFT:** \
 → Both start C → CC (R, good) → stay at C → CC forever. Stable cooperation.
-
-vs GRIM:
+- **vs GRIM:** \
 → Both start C → CC → stable C… unless one misstep occurs. If defection happens, PAVLOV can eventually shift back to C (more forgiving than GRIM).
+---
+**Pros:**
+- More forgiving than TFT or GRIM: can recover cooperation after accidental defections.
+- Exploits ALLC less harshly than ALLD, but still avoids endless exploitation.
+- Good balance between retaliation and forgiveness.
+---
+**Cons:**
+- Can be unstable against certain reactive strategies — may bounce between C and D if misaligned.
+- Vulnerable to systematic exploitation by clever alternating strategies.
+- More complex rule set than TFT (harder to intuit).
+---
+**Noise behaviour:**
+- If an error causes a single mistaken move (e.g. defect instead of cooperate), PAVLOV may temporarily switch, but its “win-stay/lose-shift” logic lets it return to cooperation relatively quickly.
+- Much more robust to noise than GRIM or TFT.
+---
+👉 In short, **PAVLOV represents adaptive reciprocity**: it cooperates when cooperation works, defects when it doesn’t, and can repair relationships after mistakes.
 
-Pros:
+### Strategy: _RND(p) — Random_
 
-More forgiving than TFT or GRIM: can recover cooperation after accidental defections.
-
-Exploits ALLC less harshly than ALLD, but still avoids endless exploitation.
-
-Good balance between retaliation and forgiveness.
-
-Cons:
-
-Can be unstable against certain reactive strategies — may bounce between C and D if misaligned.
-
-Vulnerable to systematic exploitation by clever alternating strategies.
-
-More complex rule set than TFT (harder to intuit).
-
-Noise behaviour:
-
-If an error causes a single mistaken move (e.g. defect instead of cooperate), PAVLOV may temporarily switch, but its “win-stay/lose-shift” logic lets it return to cooperation relatively quickly.
-
-Much more robust to noise than GRIM or TFT.
-
-👉 In short, PAVLOV represents adaptive reciprocity: it cooperates when cooperation works, defects when it doesn’t, and can repair relationships after mistakes.
-
-Strategy: RND(p) — Random
-Idea:
-On each round, play Cooperate (C) with probability p and Defect (D) with probability (1–p), regardless of history.
+**Idea:** \
+On each round, play Cooperate (C) with probability p and Defect (D) with probability (1–p), regardless of history.  
 It is memoryless and does not adapt to the opponent.
-
-Behaviour:
+---
+**Behaviour:**
 
 No state carried forward — every decision is fresh.
 
