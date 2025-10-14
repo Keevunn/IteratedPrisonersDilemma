@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{D06DE2A9-9A2E-FD04-7A3D-DDC5A9A0676A}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ipd_lib\src\Agent.cpp" />
+    <ClCompile Include="ipd_lib\src\ConfigParser.cpp" />
+    <ClCompile Include="ipd_lib\src\Engine.cpp" />
+    <ClCompile Include="ipd_lib\src\Match.cpp" />
+    <ClCompile Include="ipd_lib\src\MathUtil.cpp" />
+    <ClCompile Include="ipd_lib\src\Results.cpp" />
+    <ClCompile Include="ipd_lib\src\Strategies.cpp" />
+    <ClCompile Include="ipd_lib\src\Tournament.cpp" />
+    <ClCompile Include="ipd_lib\tests\Engine_ArgTests.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ipd_lib\include\Agent.h" />
+    <ClInclude Include="ipd_lib\include\ConfigParser.h" />
+    <ClInclude Include="ipd_lib\include\Engine.h" />
+    <ClInclude Include="ipd_lib\include\GameConfig.h" />
+    <ClInclude Include="ipd_lib\include\Match.h" />
+    <ClInclude Include="ipd_lib\include\MathUtil.h" />
+    <ClInclude Include="ipd_lib\include\Results.h" />
+    <ClInclude Include="ipd_lib\include\Tournament.h" />
+    <ClInclude Include="out\build\x64-debug\cmakefiles\showincludes\foo.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock-actions.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock-cardinalities.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock-function-mocker.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock-matchers.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock-more-actions.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock-more-matchers.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock-nice-strict.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock-spec-builders.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\gmock.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\internal\custom\gmock-generated-actions.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\internal\custom\gmock-matchers.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\internal\custom\gmock-port.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\internal\gmock-internal-utils.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\internal\gmock-port.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\include\gmock\internal\gmock-pp.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\test\gmock-matchers_test.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googlemock\test\gmock_link_test.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-assertion-result.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-death-test.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-matchers.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-message.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-param-test.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-printers.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-spi.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-test-part.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest-typed-test.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest_pred_impl.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\gtest_prod.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\custom\gtest-port.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\custom\gtest-printers.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\custom\gtest.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\gtest-death-test-internal.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\gtest-filepath.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\gtest-internal.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\gtest-param-util.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\gtest-port-arch.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\gtest-port.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\gtest-string.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\include\gtest\internal\gtest-type-util.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\samples\prime_tables.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\samples\sample1.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\samples\sample2.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\samples\sample3-inl.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\samples\sample4.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\src\gtest-internal-inl.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\test\googletest-param-test-test.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\test\gtest-typed-test_test.h" />
+    <ClInclude Include="out\build\x64-debug\_deps\googletest-src\googletest\test\production.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="out\build\x64-debug\cmakefiles\4.1.2\CMakeDetermineCompilerABI_C.bin" />
+    <None Include="out\build\x64-debug\cmakefiles\4.1.2\CMakeDetermineCompilerABI_CXX.bin" />
+    <None Include="out\build\x64-debug\_deps\googletest-src\docs\_layouts\default.html" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
