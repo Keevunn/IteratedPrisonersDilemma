@@ -1,7 +1,7 @@
 file(GLOB HEADER_LIST
         CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/*.h")
 file(GLOB SOURCE_LIST
-        CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/*.cpp")
+        CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/*.cpp" "${PROJECT_SOURCE_DIR}/src/StrategyAgents/*.cpp")
 add_library(IPD_library ${HEADER_LIST} ${SOURCE_LIST})
 
 target_include_directories(IPD_library PUBLIC include)

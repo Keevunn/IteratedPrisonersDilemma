@@ -1,4 +1,4 @@
-#include "../include/Agent.h"
+#include "../../include/Agent.h"
 
 namespace StrategyAgents {
 
