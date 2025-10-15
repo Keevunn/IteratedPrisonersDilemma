@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Agent.h"
+#include "StrategyAgents/Agent.h"
 
 using namespace GameConfig::Strategies;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Agent.h"
+#include "StrategyAgents/Agent.h"
 #include "GameConfig.h"
 
 #include <vector>

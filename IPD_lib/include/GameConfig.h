@@ -1,11 +1,12 @@
 #pragma once
 #include <array>
+#include <iostream>
 
 namespace GameConfig {
 
     namespace Args{
 
-         static enum class ArgTypes{
+         enum class ArgTypes{
             ROUNDS, REPEATS, SEED, EPSILON, PAYOFFS,
             STRATEGIES, FORMAT, SAVE, LOAD,
             EVOLVE, POPULATION, GENERATIONS, MUTATION
@@ -15,10 +16,19 @@ namespace GameConfig {
 
     namespace Strategies {
 
-        static enum class StrategyTypes{
+        enum class StrategyTypes{
             ALLC,ALLD,TFT,GRIM,PAVLOV,RND03,CONTRITE,PROBER
         };
 
+    }
+
+    // To avoid any errors with strings
+    namespace Responses {
+        enum class ResponseType{ C, D, INVALID };
+
+        inline std::ostream& operator<<(std::ostream& os, const ResponseType& response) {
+            return os << (response == ResponseType::C ? 'C' : 'D');
+        }
     }
 
     // Inline static - single definition across TUs, all initialised to default values

@@ -1,6 +1,9 @@
 #pragma once
+#include "../GameConfig.h"
+
 #include <string>
-#include <utility>
+
+using namespace GameConfig::Responses;
 
 // Define an abstract base class for each strategy to inherit from
 
@@ -8,21 +11,24 @@ namespace StrategyAgents {
 
     class Agent {
     public:
-        explicit Agent(std::string  init) : initialResponse(std::move(init)) {}
+        explicit Agent(const ResponseType init) : initialResponse(init) {}
+        Agent() = default;
         Agent(Agent&& other) noexcept : initialResponse(other.initialResponse) {} // move constructor, could move score, but not expecting to move Agent object after running rounds
 
         virtual ~Agent() = default;
 
-        virtual std::string decide(const std::string_view& lastResponse);
-        virtual std::string decide(); // Can be used for memoryless strats or initial decision
+        ResponseType decide(const ResponseType& lastResponse = ResponseType::INVALID);
 
         [[nodiscard]] double getScore() const;
         void setScore(double value);
-        void addToScore(double value);
+        virtual void addToScore(double value);
+
+    protected:
+        virtual ResponseType decideLogic(const ResponseType& lastResponse);
+        const ResponseType initialResponse = ResponseType::C;
 
     private:
         double score{}; // Score per round
-        const std::string_view initialResponse;
     };
 
 }
