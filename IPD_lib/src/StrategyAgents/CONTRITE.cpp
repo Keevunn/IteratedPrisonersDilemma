@@ -1,10 +1,10 @@
-#include "../../include/StrategyAgents/TFT.h"
+#include "../../include/StrategyAgents/CONTRITE.h"
 
 #include <iostream>
 
 namespace StrategyAgents {
 
-    ResponseType TFT::decide(const ResponseType& lastResponse) {
+    ResponseType CONTRITE::decide(const ResponseType& lastResponse) {
         if (lastResponse == ResponseType::INVALID) return initialResponse;
         return lastResponse;
     }

@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 4.0)
-project(Main)
+project(IPD_main)
 set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCE_FILES main.cpp)
 
 add_subdirectory(IPD_lib)
-add_executable(Main ${SOURCE_FILES})
+add_executable(IPD_main ${SOURCE_FILES})
 
-target_link_libraries(Main PRIVATE IPD_library)
+target_link_libraries(IPD_main PRIVATE IPD_library)

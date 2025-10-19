@@ -4,11 +4,10 @@
 
 namespace StrategyAgents {
     // Initial response: C
-    class ALLC : public Agent {
+    class CONTRITE : public Agent {
     public:
-        ALLC() : Agent("ALLC") {}
+        CONTRITE() : Agent("CONTRITE") {}
 
-    protected:
         ResponseType decide(const ResponseType& lastResponse) override;
 
     };

@@ -9,24 +9,14 @@
 namespace Tournament {
 
     // Manages a single match
-    class Match {
+    namespace Match {
 
-    public:
-        Match(StrategyAgents::Agent p1, StrategyAgents::Agent p2) : player1(p1), player2(p2){
-            matchHistory.reserve(GameConfig::rounds);
-        }
+        std::pair<double, double> simulateMatch(const std::unique_ptr<StrategyAgents::Agent>& player1, const std::unique_ptr<StrategyAgents::Agent>& player2);
+        [[nodiscard]] std::pair<ResponseType, ResponseType> runRound(
+            const std::unique_ptr<StrategyAgents::Agent>& player1, const std::unique_ptr<StrategyAgents::Agent>& player2,
+            const ResponseType& p1LastResponse = ResponseType::INVALID, const ResponseType& p2LastResponse = ResponseType::INVALID); // Returns {player 1, player 2} outcome
+        [[nodiscard]] double calculatePayoff(const ResponseType& p1, const ResponseType& p2); // ensures return value is used
 
-    std::pair<double, double> simulateMatch();
-
-    private:
-        std::pair<std::string, std::string> runRound(); // Returns {player 1, player 2} outcome
-        [[nodiscard]] double calculatePayoff(const std::string_view& p1, const std::string_view& p2) const; // ensures return value is used
-
-
-        std::vector<std::pair<std::string, std::string>> matchHistory = {};
-        StrategyAgents::Agent player1;
-        StrategyAgents::Agent player2;
-
-    };
+    }
 
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "Agent.h"
 
 
@@ -6,13 +8,10 @@ namespace StrategyAgents {
     // Initial response: C
     class RNDp : public Agent {
     public:
-        RNDp() : Agent() {}
-        explicit RNDp(const double p) : Agent(), probabilityC(p) {}
-        explicit RNDp(Agent&& other) noexcept : Agent() {}
+        RNDp() : Agent("RND0.3") {}
+        explicit RNDp(const double p) : Agent("RND"+std::to_string(p)), probabilityC(p) {}
 
-        ResponseType decideLogic(const ResponseType& lastResponse) override;
-
-        friend std::ostream& operator<<(std::ostream& os, const RNDp& agent);
+        ResponseType decide(const ResponseType& lastResponse) override;
 
     private:
         double probabilityC = 0.3;

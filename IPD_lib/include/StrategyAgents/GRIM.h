@@ -6,13 +6,11 @@ namespace StrategyAgents {
     // Initial response: C
     class GRIM : public Agent {
     public:
-        GRIM() : Agent() {}
-        explicit GRIM(Agent&& other) noexcept : Agent() {}
+        GRIM() : Agent("GRIM") {}
 
-        friend std::ostream& operator<<(std::ostream& os, const GRIM& agent);
+        ResponseType decide(const ResponseType& lastResponse) override;
 
-    protected:
-        ResponseType decideLogic(const ResponseType& lastResponse) override;
+        void resetAgent() override;
 
     private:
         bool playerHasDefected = false;

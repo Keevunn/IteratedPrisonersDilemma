@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace Engine {
+namespace Engine::ConfigParser {
 
     namespace Args {
 
@@ -44,7 +44,7 @@ namespace Engine {
 
     }
 
-    Args::ArgTypes ConfigParser::validateArg(std::string_view arg) {
+    ArgTypes validateArg(std::string_view arg) {
         auto it = Args::argMap.find(arg);
 
         if (it == Args::argMap.end())
@@ -53,12 +53,12 @@ namespace Engine {
         return it->second;
     }
 
-    void ConfigParser::validateFormat(std::string_view format) {
+    void validateFormat(std::string_view format) {
         if (format != "text" && format != "csv" && format != "json")
             throw std::invalid_argument("Invalid parameter for --format argument: " + std::string(format) + "\nUse --format {text | csv | json}");
     }
 
-    std::array<double, 4> ConfigParser::validatePayoffs(const std::string_view &param) {
+    std::array<double, 4> validatePayoffs(const std::string_view &param) {
         std::array<double, 4> payoffs{};
         auto first = param.data(); auto last = param.data() + param.size();
         double value{};
@@ -87,7 +87,7 @@ namespace Engine {
         return payoffs;
     }
 
-    Strategies::StrategyTypes validateStrategies(const std::string_view& strategy){
+    StrategyTypes validateStrategies(const std::string_view& strategy){
         auto it = Strategies::strategyMap.find(strategy);
 
         if (it == Strategies::strategyMap.end())
@@ -96,8 +96,8 @@ namespace Engine {
         return it->second;
     }
 
-    std::vector<Strategies::StrategyTypes> ConfigParser::parseStrategies(const std::string_view& param) {
-        std::vector<Strategies::StrategyTypes> strategies;
+    std::vector<StrategyTypes> parseStrategies(const std::string_view& param) {
+        std::vector<StrategyTypes> strategies;
         strategies.reserve(10); // At most 10 strategies
         size_t i = 0;
         size_t pos = param.find(',', i);
@@ -114,7 +114,7 @@ namespace Engine {
         return strategies;
     }
 
-    void ConfigParser::validateFileName(const std::string_view& fileName, bool shouldLoad){
+    void validateFileName(const std::string_view& fileName, bool shouldLoad){
         size_t dot = fileName.find('.');
         if (dot == std::string_view::npos)
             throw std::invalid_argument("Invalid file name: " + std::string(fileName) + "\nFile name must contain a text file extension (.txt)");

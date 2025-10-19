@@ -1,11 +1,17 @@
 #include "../../include/StrategyAgents/Agent.h"
+#include <iomanip>
 
 namespace StrategyAgents {
+    ResponseType Agent::decide(const ResponseType &lastResponse) { return ResponseType::INVALID; }
+
+    void Agent::resetAgent() {
+        score = 0;
+    }
 
     double Agent::getScore() const{ return score; }
     void Agent::setScore(const double value) { score = value; }
     void Agent::addToScore(const double value) { score += value; }
 
-    ResponseType Agent::decide(const ResponseType& lastResponse) { return decideLogic(lastResponse); }
+    std::string_view Agent::getName() const { return name; }
 
 }

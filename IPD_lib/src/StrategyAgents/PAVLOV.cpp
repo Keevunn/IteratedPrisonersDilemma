@@ -9,16 +9,16 @@ namespace StrategyAgents {
         Agent::addToScore(value);
     }
 
-    ResponseType PAVLOV::decideLogic(const ResponseType& lastResponse) {
+    ResponseType PAVLOV::decide(const ResponseType& lastResponse) {
         if (lastResponse == ResponseType::INVALID) return response;
-        response = (lastPayoff == GameConfig::payoffs[1] || lastPayoff == GameConfig::payoffs[2]) ?
+        response = (lastPayoff == GameConfig::GameConfig::payoffs[1] || lastPayoff == GameConfig::GameConfig::payoffs[2]) ?
                         response : (response == ResponseType::C) ? ResponseType::D : ResponseType::C;
         return response;
     }
 
-    std::ostream& operator<<(std::ostream& os, const PAVLOV& agent) {
-        os << std::string("Pavlov: Win-Stay, Lose-Shift");
-        return os;
+    void PAVLOV::resetAgent() {
+        Agent::resetAgent();
+        lastPayoff = 0;
+        response = initialResponse;
     }
-
 }

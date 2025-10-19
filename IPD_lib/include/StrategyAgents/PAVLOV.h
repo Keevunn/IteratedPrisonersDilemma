@@ -6,13 +6,11 @@ namespace StrategyAgents {
     // Initial response: C
     class PAVLOV : public Agent {
     public:
-        PAVLOV() {}
-        explicit PAVLOV(Agent&& other) noexcept {}
+        PAVLOV() : Agent("PAVLOV") {}
 
         void addToScore(double value) override;
-        ResponseType decideLogic(const ResponseType& lastResponse) override;
-
-        friend std::ostream& operator<<(std::ostream& os, const PAVLOV& agent);
+        ResponseType decide(const ResponseType& lastResponse) override;
+        void resetAgent() override;
 
     private:
         double lastPayoff{};

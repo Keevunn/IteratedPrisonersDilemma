@@ -4,14 +4,8 @@
 
 namespace StrategyAgents {
 
-    ResponseType ALLD::decideLogic(const ResponseType& lastResponse) {
+    ResponseType ALLD::decide(const ResponseType& lastResponse) {
         return ResponseType::D;
     }
-
-    std::ostream& operator<<(std::ostream& os, const ALLD& agent) {
-        os << std::string("Always Defect");
-        return os;
-    }
-
 
 }

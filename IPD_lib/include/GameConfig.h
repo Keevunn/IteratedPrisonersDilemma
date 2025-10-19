@@ -32,11 +32,15 @@ namespace GameConfig {
     }
 
     // Inline static - single definition across TUs, all initialised to default values
-    inline static int rounds = 100;
-    inline static int repeats = 1;
-    inline static int seed{};
-    inline static double epsilon{};
-    inline static std::array<double, 4> payoffs = {5, 3, 1, 0};
+    class GameConfig {
+    public:
+        inline static int rounds = 100;
+        inline static int repeats = 1;
+        inline static int seed{};
+        inline static double epsilon{};
+        inline static std::array<double, 4> payoffs = {5, 3, 1, 0};
+        inline static std::string format = "text";
+    };
 
 
 }

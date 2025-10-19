@@ -9,20 +9,21 @@ namespace StrategyAgents {
     }
 
     // Payoff change =  T -> R represents no retaliation
-    ResponseType PROBER::decideLogic(const ResponseType& lastResponse) {
-        if (currentRound > probePhase.size()) isProbing = false;
+    ResponseType PROBER::decide(const ResponseType& lastResponse) {
+        if (currentRound >= probePhase.size()) isProbing = false;
         if (!isProbing) return (canExploit ? ResponseType::D : lastResponse);
 
-        if (lastPayoff == GameConfig::payoffs[0]) canExploit = true;
-        if (canExploit && lastPayoff != GameConfig::payoffs[1]) canExploit = false;
+        if (lastPayoff == GameConfig::GameConfig::payoffs[0]) canExploit = true;
+        if (canExploit && lastPayoff != GameConfig::GameConfig::payoffs[1]) canExploit = false;
 
         return probePhase[currentRound++];
     }
 
-    std::ostream& operator<<(std::ostream& os, const PROBER& agent) {
-        os << std::string("PROBER");
-        return os;
+    void PROBER::resetAgent() {
+        Agent::resetAgent();
+        currentRound = 0;
+        lastPayoff = 0;
+        isProbing = true;
+        canExploit = false;
     }
-
-
 }
