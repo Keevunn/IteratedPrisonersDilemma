@@ -161,10 +161,9 @@ namespace Engine {
 
         std::ostream& operator<<(std::ostream& os, const OverallStats& stats) {
             os << std::left
-                << std::setw(10) << stats.name
-                << std::setprecision(2) << stats.mean << " ± " << stats.stdDev
-                << " [" << stats.CI.first << "-" << stats.CI.second << "]"
-                << std::endl;
+                << std::setw(15) << stats.name
+                << std::setprecision(4) << stats.mean << " ± " << stats.stdDev
+                << " [" << stats.CI.first << "-" << stats.CI.second << "]";
             return os;
         }
 
@@ -217,10 +216,7 @@ namespace Engine {
         for (const auto& stats : *leaderboard) {
             os << std::left
             << std::setw(3) << i++
-            << std::setw(15) << stats.name
-            << std::setprecision(4) << stats.mean << " ± " << stats.stdDev
-            << " [" << stats.CI.first << "-" << stats.CI.second << "]"
-            << std::endl;
+            << stats << std::endl;
         }
         return os << std::endl;
 
@@ -256,7 +252,6 @@ namespace Engine {
         for (const StrategyTypes& strat : strategies) {
             os  << std::setw(10) << strategyToString(strat);
         }
-        os << std::endl;
 
         const auto& matches  = tournament->getMatchResults();
         std::string header = "";
