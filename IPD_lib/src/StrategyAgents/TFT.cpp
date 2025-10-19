@@ -5,8 +5,8 @@
 namespace StrategyAgents {
 
     ResponseType TFT::decide(const ResponseType& lastResponse) {
-        if (lastResponse == ResponseType::INVALID) return initialResponse;
-        return lastResponse;
+        if (lastResponse == ResponseType::INVALID) return noisyResponse(initialResponse);
+        return noisyResponse(lastResponse);
     }
 
 }

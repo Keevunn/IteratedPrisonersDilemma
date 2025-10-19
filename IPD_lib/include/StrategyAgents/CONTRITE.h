@@ -9,6 +9,8 @@ namespace StrategyAgents {
         CONTRITE() : Agent("CONTRITE") {}
 
         ResponseType decide(const ResponseType& lastResponse) override;
-
+        void resetAgent() override;
+    private:
+        bool shouldApologise = false;
     };
 }

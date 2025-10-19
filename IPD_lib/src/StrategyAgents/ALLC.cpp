@@ -2,6 +2,6 @@
 
 namespace StrategyAgents {
 
-    ResponseType ALLC::decide(const ResponseType& lastResponse) { return ResponseType::C; }
+    ResponseType ALLC::decide(const ResponseType& lastResponse) { return noisyResponse(ResponseType::C); }
 
 }

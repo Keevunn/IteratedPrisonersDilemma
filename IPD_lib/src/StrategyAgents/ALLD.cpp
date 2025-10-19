@@ -4,8 +4,6 @@
 
 namespace StrategyAgents {
 
-    ResponseType ALLD::decide(const ResponseType& lastResponse) {
-        return ResponseType::D;
-    }
+    ResponseType ALLD::decide(const ResponseType& lastResponse) { return noisyResponse(ResponseType::D); }
 
 }

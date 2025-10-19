@@ -1,5 +1,6 @@
 #include "../../include/StrategyAgents/Agent.h"
-#include <iomanip>
+
+#include "../../include/RandomUtil.h"
 
 namespace StrategyAgents {
     ResponseType Agent::decide(const ResponseType &lastResponse) { return ResponseType::INVALID; }
@@ -14,4 +15,14 @@ namespace StrategyAgents {
 
     std::string_view Agent::getName() const { return name; }
 
+    ResponseType Agent::noisyResponse(const ResponseType &response) {
+        bool shouldSwitch = false;
+
+        if ( Random::Random::getRandomDouble() <= GameConfig::GameConfig::epsilon ) shouldSwitch = true;
+
+        return shouldSwitch ?
+            (( response == ResponseType::C ) ?
+                ResponseType::D : ResponseType::C) :
+            response;
+    }
 }

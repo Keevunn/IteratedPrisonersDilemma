@@ -1,5 +1,4 @@
 #include "../include/Engine.h"
-#include "../include/ConfigParser.h"
 
 #include <filesystem>
 #include <fstream>
@@ -7,7 +6,9 @@
 #include <stdexcept>
 #include <unordered_map>
 
+#include "../include/ConfigParser.h"
 #include "../include/MathUtil.h"
+#include "../include/RandomUtil.h"
 using json = nlohmann::json;
 
 namespace Engine {
@@ -27,13 +28,13 @@ namespace Engine {
 
             switch (arg) { // Increments the pointer
                 case ArgTypes::ROUNDS:
-                    GameConfig::GameConfig::rounds = ConfigParser::parseParam<int>(args[++i], "--rounds"); break;
+                    GameConfig::GameConfig::rounds = ConfigParser::parseParam<int>(args[++i], "--rounds", 0); break;
                 case ArgTypes::REPEATS:
-                    GameConfig::GameConfig::repeats = ConfigParser::parseParam<int>(args[++i], "--repeats"); break;
+                    GameConfig::GameConfig::repeats = ConfigParser::parseParam<int>(args[++i], "--repeats", 0); break;
                 case ArgTypes::SEED:
                     GameConfig::GameConfig::seed = ConfigParser::parseParam<int>(args[++i], "--seed"); break;
                 case ArgTypes::EPSILON:
-                    GameConfig::GameConfig::epsilon = ConfigParser::parseParam<double>(args[++i], "--epsilon"); break;
+                    GameConfig::GameConfig::epsilon = ConfigParser::parseParam<double>(args[++i], "--epsilon", {0,1}); break;
                 case ArgTypes::PAYOFFS:
                     GameConfig::GameConfig::payoffs = ConfigParser::validatePayoffs(args[++i]); break;
                 case ArgTypes::STRATEGIES:

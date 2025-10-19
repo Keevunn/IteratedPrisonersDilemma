@@ -2,6 +2,7 @@
 
 #include <charconv>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 #include "GameConfig.h"
@@ -24,6 +25,32 @@ namespace Engine::ConfigParser {
 
         if (auto res = std::from_chars(first, last, value); res.ec != std::errc() || res.ptr != last)
             throw std::invalid_argument("Invalid parameter for " + arg + " argument: " + std::string(param));
+        return value;
+    }
+
+    template<typename T> requires std::is_arithmetic_v<T>
+    T parseParam(const std::string_view& param, const std::string&& arg, const T& lowerBound) {
+        auto first = param.data(); auto last = param.data()+param.size();
+        T value{};
+
+        if (auto res = std::from_chars(first, last, value); res.ec != std::errc() || res.ptr != last)
+            throw std::invalid_argument("Invalid parameter for " + arg + " argument: " + std::string(param));
+        if (value < lowerBound)
+            throw std::invalid_argument("Parameter for " + arg + " argument must be greater than " + std::to_string(lowerBound) + ": " + std::string(param));
+        return value;
+    }
+
+    template<typename T> requires std::is_arithmetic_v<T>
+    T parseParam(const std::string_view& param, const std::string&& arg, const std::pair<T, T>& range) {
+        auto first = param.data(); auto last = param.data()+param.size();
+        T value{};
+
+        if (auto res = std::from_chars(first, last, value); res.ec != std::errc() || res.ptr != last)
+            throw std::invalid_argument("Invalid parameter for " + arg + " argument: " + std::string(param));
+        if (range.first >= range.second)
+            throw std::invalid_argument("Invalid range: [" + std::to_string(range.first) + ", " + std::to_string(range.second) + "]"); // Error on the developer's end
+        if (value < range.first || value > range.second)
+            throw std::invalid_argument("Parameter for " + arg + " argument must be in the range [" + std::to_string(range.first) + ", " + std::to_string(range.second) + "]: " + std::string(param));
         return value;
     }
 

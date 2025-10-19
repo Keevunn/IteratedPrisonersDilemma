@@ -8,7 +8,7 @@ namespace StrategyAgents {
         if (lastResponse == ResponseType::INVALID) return initialResponse;
         if (lastResponse == ResponseType::D)
             playerHasDefected = true;
-        return (playerHasDefected ? ResponseType::D : ResponseType::C);
+        return noisyResponse(playerHasDefected ? ResponseType::D : ResponseType::C);
     }
 
     void GRIM::resetAgent() {

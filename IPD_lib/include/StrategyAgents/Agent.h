@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../GameConfig.h"
 
 using namespace GameConfig::Responses;
@@ -13,7 +14,6 @@ namespace StrategyAgents {
         explicit Agent(const ResponseType init, const std::string_view name) : initialResponse(init), name(name) {}
         explicit Agent(const std::string_view name) : name(name) {}
         Agent() = default;
-        Agent(Agent&& other) noexcept : initialResponse(other.initialResponse) {} // move constructor, could move score, but not expecting to move Agent object after running rounds
 
         virtual ~Agent() = default;
 
@@ -25,11 +25,12 @@ namespace StrategyAgents {
         void setScore(double value);
         virtual void addToScore(double value);
 
-        std::string_view getName() const;
+        [[nodiscard]] std::string_view getName() const;
 
         friend std::ostream& operator<<(std::ostream& os, const Agent& agent);
 
     protected:
+        ResponseType noisyResponse(const ResponseType& response);
         const ResponseType initialResponse = ResponseType::C;
         std::string name{};
 
