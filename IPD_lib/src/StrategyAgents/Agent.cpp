@@ -15,6 +15,8 @@ namespace StrategyAgents {
 
     std::string_view Agent::getName() const { return name; }
 
+    StrategyTypes Agent::getStrategy() const { return strategy; }
+
     ResponseType Agent::noisyResponse(const ResponseType &response) {
         bool shouldSwitch = false;
 

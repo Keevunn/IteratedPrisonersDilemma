@@ -14,7 +14,7 @@ using json = nlohmann::json;
 namespace Engine {
 
     void Engine::runIPD() {
-        std::vector<Tournament::MatchResults>& matches = tournament->simulateTournament();
+        tournament->simulateTournament();
         outputResults();
     }
 
@@ -72,6 +72,8 @@ namespace Engine {
         }
         if (shouldSave) saveConfig(fileName, args);
         if (shouldLoad) loadConfig(fileName);
+        if (shouldEvolve && strategies.size() < 4)
+            throw std::invalid_argument("Not enough strategies provided for evolution: Requires at least 4 distinct strategies. \nValid strategies: ALLC,ALLD,TFT,GRIM,PAVLOV,RND0.3,CONTRITE,PROBER");
 
     }
 
@@ -181,6 +183,10 @@ namespace Engine {
             stats.CI = MathUtil::calculateCI(stats.mean, stats.stdDev, scores.size() );
             leaderboard->emplace_back(stats);
         }
+
+        std::ranges::sort(*leaderboard,
+                          [](const auto& a, const auto& b) { return a.mean > b.mean; });
+
         return leaderboard;
     }
 
@@ -210,9 +216,6 @@ namespace Engine {
 
         auto leaderboard = generateLeaderboard();
 
-        std::ranges::sort(*leaderboard,
-                          [](const auto& a, const auto& b) { return a.mean > b.mean; });
-
         int i = 1;
         for (const auto& stats : *leaderboard) {
             os << std::left
@@ -221,28 +224,6 @@ namespace Engine {
         }
         return os << std::endl;
 
-    }
-
-    std::string strategyToString(const StrategyTypes& strategy) {
-        switch (strategy) {
-            case StrategyTypes::ALLC:
-                return "ALLC";
-            case StrategyTypes::ALLD:
-                return "ALLD";
-            case StrategyTypes::CONTRITE:
-                return "CONTRITE";
-            case StrategyTypes::GRIM:
-                return "GRIM";
-            case StrategyTypes::PAVLOV:
-                return "PAVLOV";
-            case StrategyTypes::PROBER:
-                return "PROBER";
-            case StrategyTypes::RND03:
-                return "RND0.3";
-            case StrategyTypes::TFT:
-                return "TFT";
-        }
-        throw std::invalid_argument("Invalid Strategy Type");
     }
 
     std::ostream& Engine::outputPayoffMatrix(std::ostream& os) {

@@ -101,15 +101,36 @@ namespace Engine::ConfigParser {
         strategies.reserve(10); // At most 10 strategies
         size_t i = 0;
         size_t pos = param.find(',', i);
+        std::string stratList = param.data();
 
+        bool ignoreDuplicatesMessage = false;
         while (pos < std::string_view::npos) {
             std::string_view strategy = param.substr(i, pos - i);
-            strategies.emplace_back(validateStrategies(strategy));
+            StrategyTypes stratType = validateStrategies(strategy);
+            if (std::ranges::find(strategies, stratType) != strategies.end()) {
+                ignoreDuplicatesMessage = true;
+                stratList.erase(i, pos-i+1);
+            }
+            else
+                strategies.emplace_back(stratType);
+
             i = pos + 1;
             pos = param.find(',', i);
         }
         std::string_view strategy = param.substr(i, pos - i);
-        strategies.emplace_back(validateStrategies(strategy));
+        StrategyTypes stratType = validateStrategies(strategy);
+        if (std::ranges::find(strategies, stratType) != strategies.end()) {
+            ignoreDuplicatesMessage = true;
+            stratList.erase(i, pos-i+1);
+        }
+        else
+            strategies.emplace_back(stratType);
+
+
+
+        if (ignoreDuplicatesMessage) {
+            std::cout << "Duplicate strategies have been omitted. Final strategies list: " << stratList << std::endl;
+        }
 
         return strategies;
     }

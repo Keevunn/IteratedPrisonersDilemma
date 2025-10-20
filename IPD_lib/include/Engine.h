@@ -3,6 +3,7 @@
 #include <string_view>
 #include <vector>
 
+#include "EvolutionaryTournament.h"
 #include "GameConfig.h"
 #include "Tournament.h"
 
@@ -29,7 +30,10 @@ namespace Engine {
         Engine(const int argc, char* argv[]) {
             const std::vector<std::string_view> args(argv + 1, argv + argc);
             parseArgs(args);
-            tournament = std::make_unique<Tournament::Tournament>(strategies);
+            if (shouldEvolve)
+                tournament = std::make_unique<Tournament::Evolution::EvolutionaryTournament>(strategies, population, generations, mutation);
+            else
+                tournament = std::make_unique<Tournament::Tournament>(strategies);
         };
         explicit Engine(const std::vector<std::string_view>& args) { // For testing purposes
             parseArgs(args);
@@ -63,7 +67,7 @@ namespace Engine {
         // Evolution params (only if shouldEvolve)
         int population = 100;
         int generations = 50;
-        double mutation = 0.01;
+        double mutation = 0.00;
 
         // Simulation data
         std::unique_ptr<Tournament::Tournament> tournament;

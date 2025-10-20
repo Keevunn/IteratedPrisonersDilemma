@@ -9,7 +9,6 @@ using namespace GameConfig::Strategies;
 using namespace GameConfig::Responses;
 
 namespace Tournament {
-// Note: Output is up to my discretion!!!
 
     typedef struct MatchResultsStruct {
         MatchResultsStruct( std::unique_ptr<StrategyAgents::Agent>& p1,  std::unique_ptr<StrategyAgents::Agent>& p2) : player1(p1), player2(p2) {};
@@ -30,20 +29,24 @@ namespace Tournament {
             matchResults.reserve(numMatches);
             matchMaking();
         }
+        virtual ~Tournament() = default;
 
-        std::vector<MatchResults>& simulateTournament();
-        std::unordered_map<std::string, std::vector<double>> getTotalScores();
-        std::vector<MatchResults> getMatchResults();
+        virtual void simulateTournament();
+        std::unordered_map<std::string, std::vector<double>>& getTotalScores();
+        std::vector<MatchResults>& getMatchResults();
+
+    protected:
+        const std::vector<StrategyTypes>& strategies;
+        std::vector<MatchResults> matchResults{}; // Each item is a struct, representing the results of a repeated match between 2 strategies
 
     private:
         void matchMaking();
         void generatePlayers();
         [[nodiscard]] std::unique_ptr<StrategyAgents::Agent> getAgentType(const StrategyTypes& strat);
 
-        const std::vector<StrategyTypes>& strategies;
         std::unordered_map<StrategyTypes, std::pair<std::unique_ptr<StrategyAgents::Agent>, std::unique_ptr<StrategyAgents::Agent>>> players;
         std::unordered_map<std::string, std::vector<double>> totalScores;
-        std::vector<MatchResults> matchResults{}; // Each item is a struct, representing the results of a repeated match between 2 strategies
+
 
     };
 

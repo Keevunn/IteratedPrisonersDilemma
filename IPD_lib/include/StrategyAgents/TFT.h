@@ -6,7 +6,7 @@ namespace StrategyAgents {
     // Initial response: C
     class TFT : public Agent {
     public:
-        TFT() : Agent("TFT") {}
+        TFT() : Agent(StrategyTypes::TFT) {}
 
     protected:
         ResponseType decide(const ResponseType& lastResponse) override;

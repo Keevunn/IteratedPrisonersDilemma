@@ -6,7 +6,7 @@ namespace StrategyAgents {
     // Initial response (Probe phase): C, D, C, C
     class PROBER : public Agent {
     public:
-        PROBER() : Agent("PROBER") {}
+        PROBER() : Agent(StrategyTypes::PROBER) {}
 
         void addToScore(double value) override;
         ResponseType decide(const ResponseType& lastResponse) override;

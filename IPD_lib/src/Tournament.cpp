@@ -14,7 +14,7 @@
 
 namespace Tournament {
 
-    std::vector<MatchResults>& Tournament::simulateTournament() {
+     void Tournament::simulateTournament() {
 
         for (auto& match : matchResults) { // Iterate through each match up
             std::vector<double> player1Scores{};
@@ -44,13 +44,13 @@ namespace Tournament {
 
         }
 
-        return matchResults;
+
 
     }
 
-    std::unordered_map<std::string, std::vector<double>> Tournament::getTotalScores() { return totalScores; }
+    std::unordered_map<std::string, std::vector<double>>& Tournament::getTotalScores() { return totalScores; }
 
-    std::vector<MatchResults> Tournament::getMatchResults() { return matchResults; }
+    std::vector<MatchResults>& Tournament::getMatchResults() { return matchResults; }
 
     void Tournament::matchMaking() {
         generatePlayers();

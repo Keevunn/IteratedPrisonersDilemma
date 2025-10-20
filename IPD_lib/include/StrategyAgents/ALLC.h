@@ -6,7 +6,7 @@ namespace StrategyAgents {
     // Initial response: C
     class ALLC : public Agent {
     public:
-        ALLC() : Agent("ALLC") {}
+        ALLC() : Agent(StrategyTypes::ALLC) {}
 
     protected:
         ResponseType decide(const ResponseType& lastResponse) override;
