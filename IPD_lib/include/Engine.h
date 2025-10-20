@@ -7,7 +7,7 @@
 #include "EvolutionaryTournament.h"
 #include "GameConfig.h"
 #include "Tournament.h"
-#include "Output/Output.h"
+#include "Output/Results.h"
 
 using namespace GameConfig::Strategies;
 using namespace GameConfig::Args;
@@ -68,7 +68,7 @@ namespace Engine {
 
         // Simulation data
         std::unique_ptr<Tournament::Tournament> tournament;
-        std::unique_ptr<Output::Output> output;
+        std::unique_ptr<Results::Output> output;
 
     };
 }

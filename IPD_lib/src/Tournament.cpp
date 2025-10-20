@@ -14,7 +14,45 @@
 
 namespace Tournament {
 
-     void Tournament::simulateTournament() {
+     // Outputs 2 rows for CSV file
+     // Strategy, Opponent, mean, stdDev, CI_LB, CI_UB, rounds, repeats, epsilon, T, R, P, S
+     std::ostream& operator<<(std::ostream& os, const MatchResultsStruct& results){
+         os << results.player1->getName() << ", "
+             << results.player2->getName() << ", "
+             << results.p1Mean << ", "
+             << results.p1StdDev << ", "
+             << results.p1CI.first << ", "
+             << results.p1CI.second << ", "
+             << GameConfig::GameConfig::rounds << ", "
+             << GameConfig::GameConfig::repeats << ", "
+             << GameConfig::GameConfig::seed << ", "
+             << GameConfig::GameConfig::epsilon << ", "
+             << GameConfig::GameConfig::payoffs[0] << ", "
+             << GameConfig::GameConfig::payoffs[1] << ", "
+             << GameConfig::GameConfig::payoffs[2] << ", "
+             << GameConfig::GameConfig::payoffs[3]
+             << std::endl;
+
+         os << results.player2->getName() << ", "
+             << results.player1->getName() << ", "
+             << results.p2Mean << ", "
+             << results.p2StdDev << ", "
+             << results.p2CI.first << ", "
+             << results.p2CI.second << ", "
+             << GameConfig::GameConfig::rounds << ", "
+             << GameConfig::GameConfig::repeats << ", "
+             << GameConfig::GameConfig::seed << ", "
+             << GameConfig::GameConfig::epsilon << ", "
+             << GameConfig::GameConfig::payoffs[0] << ", "
+             << GameConfig::GameConfig::payoffs[1] << ", "
+             << GameConfig::GameConfig::payoffs[2] << ", "
+             << GameConfig::GameConfig::payoffs[3]
+             << std::endl;
+
+         return os;
+     }
+
+    void Tournament::simulateTournament() {
 
         for (auto& match : matchResults) { // Iterate through each match up
             std::vector<double> player1Scores{};
@@ -39,14 +77,14 @@ namespace Tournament {
             match.p2StdDev = MathUtil::calculateStdDev(player2Scores, GameConfig::GameConfig::repeats, match.p2Mean);
             match.p2CI = MathUtil::calculateCI( match.p2Mean, match.p2StdDev, GameConfig::GameConfig::repeats );
 
-            std::ranges::copy(player1Scores, back_inserter(totalScores[match.player1->getName().data()]) );
-            std::ranges::copy(player2Scores, back_inserter(totalScores[match.player2->getName().data()]) );
+            std::ranges::copy(player1Scores, back_inserter(totalScores[match.player1->getStrategy()]) );
+            std::ranges::copy(player2Scores, back_inserter(totalScores[match.player2->getStrategy()]) );
 
         }
 
     }
 
-    std::unordered_map<std::string, std::vector<double>>& Tournament::getTotalScores() { return totalScores; }
+    std::unordered_map<StrategyTypes, std::vector<double>>& Tournament::getTotalScores() { return totalScores; }
 
     std::vector<MatchResults>& Tournament::getMatchResults() { return matchResults; }
 
@@ -59,6 +97,7 @@ namespace Tournament {
 
     }
 
+
     // Stored as 2 unique instances to allow self-play
     void Tournament::generatePlayers() {
         if (!players.empty()) return;
@@ -67,72 +106,33 @@ namespace Tournament {
             players.emplace(
                 strat,
                 std::make_pair(getAgentType(strat), getAgentType(strat))
-                );
+            );
             // creates an empty vector for every strategy to store scores across every game
-            totalScores.emplace(players[strat].first->getName(), std::vector<double>{});
+            totalScores.emplace(players[strat].first->getStrategy(), std::vector<double>{});
         }
     }
-
 
     std::unique_ptr<StrategyAgents::Agent> Tournament::getAgentType(const StrategyTypes& strat) {
         switch (strat) {
-            case (StrategyTypes::ALLC):
-                return std::make_unique<StrategyAgents::ALLC>(); break;
-            case (StrategyTypes::ALLD):
-                return std::make_unique<StrategyAgents::ALLD>(); break;
-            case (StrategyTypes::CONTRITE):
-                return std::make_unique<StrategyAgents::CONTRITE>(); break;
-            case (StrategyTypes::GRIM):
-                return std::make_unique<StrategyAgents::GRIM>(); break;
-            case (StrategyTypes::PAVLOV):
-                return std::make_unique<StrategyAgents::PAVLOV>(); break;
-            case (StrategyTypes::PROBER):
-                return std::make_unique<StrategyAgents::PROBER>(); break;
-            case (StrategyTypes::RND03):
-                return std::make_unique<StrategyAgents::RNDp>(); break;
-            case (StrategyTypes::TFT):
-                return std::make_unique<StrategyAgents::TFT>(); break;
-            default:
-                throw std::invalid_argument("Invalid Strategy Type"); // Should never be able to reach this line
+        case (StrategyTypes::ALLC):
+            return std::make_unique<StrategyAgents::ALLC>(); break;
+        case (StrategyTypes::ALLD):
+            return std::make_unique<StrategyAgents::ALLD>(); break;
+        case (StrategyTypes::CONTRITE):
+            return std::make_unique<StrategyAgents::CONTRITE>(); break;
+        case (StrategyTypes::GRIM):
+            return std::make_unique<StrategyAgents::GRIM>(); break;
+        case (StrategyTypes::PAVLOV):
+            return std::make_unique<StrategyAgents::PAVLOV>(); break;
+        case (StrategyTypes::PROBER):
+            return std::make_unique<StrategyAgents::PROBER>(); break;
+        case (StrategyTypes::RND03):
+            return std::make_unique<StrategyAgents::RNDp>(); break;
+        case (StrategyTypes::TFT):
+            return std::make_unique<StrategyAgents::TFT>(); break;
+        default:
+            throw std::invalid_argument("Invalid Strategy Type"); // Should never be able to reach this line
         }
-    }
-
-    // Outputs 2 rows for CSV file
-    // Strategy, Opponent, mean, stdDev, CI_LB, CI_UB, rounds, repeats, epsilon, T, R, P, S
-    std::ostream& operator<<(std::ostream& os, const MatchResultsStruct& results){
-        os << results.player1->getName() << ", "
-        << results.player2->getName() << ", "
-        << results.p1Mean << ", "
-        << results.p1StdDev << ", "
-        << results.p1CI.first << ", "
-        << results.p1CI.second << ", "
-        << GameConfig::GameConfig::rounds << ", "
-        << GameConfig::GameConfig::repeats << ", "
-        << GameConfig::GameConfig::seed << ", "
-        << GameConfig::GameConfig::epsilon << ", "
-        << GameConfig::GameConfig::payoffs[0] << ", "
-        << GameConfig::GameConfig::payoffs[1] << ", "
-        << GameConfig::GameConfig::payoffs[2] << ", "
-        << GameConfig::GameConfig::payoffs[3]
-        << std::endl;
-
-        os << results.player2->getName() << ", "
-        << results.player1->getName() << ", "
-        << results.p2Mean << ", "
-        << results.p2StdDev << ", "
-        << results.p2CI.first << ", "
-        << results.p2CI.second << ", "
-        << GameConfig::GameConfig::rounds << ", "
-        << GameConfig::GameConfig::repeats << ", "
-        << GameConfig::GameConfig::seed << ", "
-        << GameConfig::GameConfig::epsilon << ", "
-        << GameConfig::GameConfig::payoffs[0] << ", "
-        << GameConfig::GameConfig::payoffs[1] << ", "
-        << GameConfig::GameConfig::payoffs[2] << ", "
-        << GameConfig::GameConfig::payoffs[3]
-        << std::endl;
-
-        return os;
     }
 
 

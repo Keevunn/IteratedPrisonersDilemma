@@ -1,41 +1,37 @@
-#include "../../include/Output/Output.h"
+#include "../../include/Output/Results.h"
 
-#include <algorithm>
 #include <iomanip>
 
 #include "../../include/MathUtil.h"
 
-namespace Output {
+namespace Results {
 
     namespace Statistics {
         std::ostream& operator<<(std::ostream& os, const OverallStats& stats) {
-            os << std::left
+            os << std::left << std::setprecision(defaultPrecision)
                 << std::setw(defaultWidth) << stats.name
-                << std::setprecision(defaultPrecision) << stats.mean << " ± " << stats.stdDev
+                << stats.mean << " ± " << stats.stdDev
                 << " [" << stats.CI.first << "-" << stats.CI.second << "]";
             return os;
         }
     }
 
     // Should be unreachable
-    std::ostream & Output::results(std::ostream &os) { return os << "No Format Given!"; }
+    std::ostream & Output::logResults(std::ostream &os) { return os << "No Format Given!"; }
 
-    std::vector<Statistics::OverallStats> Output::generateLeaderboard() const {
-        std::vector<Statistics::OverallStats> leaderboard;
-        const auto& totalScores = tournament->getTotalScores();
-        for (const auto& [strat, scores] : totalScores) {
-            Statistics::OverallStats stats{};
-            stats.name = strat;
-            stats.mean = MathUtil::calculateMean(scores, scores.size());
-            stats.stdDev = MathUtil::calculateStdDev(scores, scores.size(), stats.mean);
-            stats.CI = MathUtil::calculateCI(stats.mean, stats.stdDev, scores.size() );
-            leaderboard.emplace_back(stats);
+    std::vector<Statistics::OverallStats> Output::generateStats(const std::unordered_map<StrategyTypes, std::vector<double>>& data) {
+        std::vector<Statistics::OverallStats> stats;
+        for (const auto& [strat, values] : data) {
+            Statistics::OverallStats entry{};
+            const int rpts = static_cast<int>(values.size());
+            entry.name = strategyToString(strat);
+            entry.mean = MathUtil::calculateMean(values, rpts);
+            entry.stdDev = MathUtil::calculateStdDev(values, rpts, entry.mean);
+            entry.CI = MathUtil::calculateCI(entry.mean, entry.stdDev, rpts );
+            stats.emplace_back(entry);
         }
 
-        std::ranges::sort(leaderboard,
-                          [](const auto& a, const auto& b) { return a.mean > b.mean; });
-
-        return leaderboard;
+        return stats;
     }
 
     std::unordered_map<StrategyTypes, std::vector<double>> Output::generatePayoffMatrix() const {
@@ -67,5 +63,5 @@ namespace Output {
         return payoffMatrix;
     }
 
-    std::ostream& operator<<(std::ostream& os, Output& output) { return output.results(os); }
+    std::ostream& operator<<(std::ostream& os, Output& output) { return output.logResults(os); }
 }

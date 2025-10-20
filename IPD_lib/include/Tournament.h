@@ -32,7 +32,7 @@ namespace Tournament {
         virtual ~Tournament() = default;
 
         virtual void simulateTournament();
-        std::unordered_map<std::string, std::vector<double>>& getTotalScores();
+        std::unordered_map<StrategyTypes, std::vector<double>>& getTotalScores();
         std::vector<MatchResults>& getMatchResults();
 
     protected:
@@ -42,10 +42,10 @@ namespace Tournament {
     private:
         void matchMaking();
         void generatePlayers();
-        [[nodiscard]] std::unique_ptr<StrategyAgents::Agent> getAgentType(const StrategyTypes& strat);
+        [[nodiscard]] static std::unique_ptr<StrategyAgents::Agent> getAgentType(const StrategyTypes& strat);
 
         std::unordered_map<StrategyTypes, std::pair<std::unique_ptr<StrategyAgents::Agent>, std::unique_ptr<StrategyAgents::Agent>>> players;
-        std::unordered_map<std::string, std::vector<double>> totalScores;
+        std::unordered_map<StrategyTypes, std::vector<double>> totalScores;
 
 
     };

@@ -1,8 +1,13 @@
 #pragma once
 
 #include "../Tournament.h"
+#include "../EvolutionaryTournament.h"
 
-namespace Output {
+namespace Tournament::Evolution {
+    class EvolutionaryTournament;
+}
+
+namespace Results {
     inline static int defaultWidth = 15;
     inline static int defaultPrecision = 4;
     inline static std::string divider = "------------------------------------------------------------";
@@ -23,17 +28,17 @@ namespace Output {
     class Output {
     public:
         virtual ~Output() = default;
-        Output(std::unique_ptr<Tournament::Tournament>& tournament) : tournament(tournament) {}
+        explicit Output(std::unique_ptr<Tournament::Tournament>&& tournament) : tournament(std::move(tournament)) {}
 
-        virtual std::ostream& results(std::ostream& os);
+        virtual std::ostream& logResults(std::ostream& os);
 
         friend std::ostream& operator<<(std::ostream& os, Output& output);
 
     protected:
-        [[nodiscard]] std::vector<Statistics::OverallStats> generateLeaderboard() const;
+        [[nodiscard]] static std::vector<Statistics::OverallStats> generateStats(const std::unordered_map<StrategyTypes, std::vector<double>>& data) ;
         [[nodiscard]] std::unordered_map<StrategyTypes, std::vector<double>> generatePayoffMatrix() const;
 
-        std::unique_ptr<Tournament::Tournament>& tournament;
+        std::unique_ptr<Tournament::Tournament> tournament;
 
     };
 }

@@ -1,12 +1,14 @@
 #include "../../include/Output/Text.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <ranges>
+#include <sstream>
 
-namespace Output::Text {
-    std::ostream& operator<<(std::ostream& os, const std::vector<Statistics::OverallStats>& leaderboard){
+namespace Results::Text {
+    std::ostream& operator<<(std::ostream& os, const std::vector<Statistics::OverallStats>& rankedData){
         int i = 1;
-        for (const auto& stats : leaderboard) {
+        for (const auto& stats : rankedData) {
             os << std::left << i++
             << std::setw(5) << "."
             << stats << std::endl;
@@ -16,7 +18,7 @@ namespace Output::Text {
 
     std::ostream& operator<<(std::ostream& os, const std::vector<double>& dataRow) {
         for (const auto& entry : dataRow)
-            os << std::setw(defaultWidth) << std::setprecision(defaultPrecision) << entry;
+            os << std::setprecision(defaultPrecision) << std::setw(defaultWidth) << entry;
 
         return os << std::endl;
     }
@@ -36,8 +38,9 @@ namespace Output::Text {
         return os << std::endl;
     }
 
-    std::ostream &Text::results(std::ostream &os) {
-        os  << " Tournament Summary " << std::endl
+    std::ostream& Output::logResults(std::ostream &os) {
+        os  << std::left << std::setprecision(defaultPrecision)
+            << " Tournament Summary " << std::endl
             << divider << std::endl
             << "Rounds: " << GameConfig::GameConfig::rounds
             << "\tRepeats: " << GameConfig::GameConfig::repeats
@@ -65,25 +68,67 @@ namespace Output::Text {
 
     }
 
+    std::vector<Statistics::OverallStats> Output::generateLeaderboard() const {
+        auto leaderboard = generateStats(tournament->getTotalScores());
+        std::ranges::sort(leaderboard,
+                          [](const auto& a, const auto& b) { return a.mean > b.mean; });
+        return leaderboard;
+    }
+
 
     namespace Evolution {
 
         std::ostream& operator<<(std::ostream& os, const std::vector<double>& row) {
             for (const auto& entry : row)
-                os << std::setw(defaultWidth) << std::setprecision(defaultPrecision) << entry;
+                os << std::setw(defaultWidth) << entry;
 
             return os << std::endl;
         }
 
-        std::ostream& operator<<(std::ostream& os, const std::unordered_map<StrategyTypes, std::vector<double>>& dataRows) {
-            for (const auto& [strat, row] : dataRows)
-                os << std::setw(defaultWidth) << strategyToString(strat) << row;
+        std::ostream& operator<<(std::ostream& os, const historicalDataOutConfig&& historicalDataStruct) {
+            std::ostringstream header;
+            header  << std::left << std::setw(defaultWidth) << "t =";
 
-            return os << std::endl;
+            std::ostringstream body;
+            body << std::left << std::setprecision(defaultPrecision);
+
+            bool isHeaderComplete = false;
+            bool hasPrintedFinalCol = false;
+
+            const auto& historicalData = historicalDataStruct.historicalData;
+            const auto generations = historicalDataStruct.generations;
+            const auto increment = historicalDataStruct.increment;
+
+            for (const auto& [strat, data] : historicalData) {
+                body << std::setw(defaultWidth) << strategyToString(strat);
+
+                for (int pos{}; pos < generations ; pos+=increment) {
+                    if (!isHeaderComplete) {
+                        header << std::setw(defaultWidth) << pos;
+                    }
+                    body << std::setw(defaultWidth) << data[pos];
+                    hasPrintedFinalCol = (pos == generations - 1);
+                }
+                // after the first complete iteration of the inner for loop, header will be complete
+                if (!isHeaderComplete) {
+                    header << std::endl;
+                    isHeaderComplete = true;
+                }
+
+                if (!hasPrintedFinalCol) {
+                    header << generations - 1;
+                    body << data[generations - 1];
+                }
+
+                body << std::endl;
+            }
+            os << header.str() << body.str();
+            return os;
         }
 
-        std::ostream &Evolution::results(std::ostream &os) {
-            os  << " Tournament Summary " << std::endl
+        std::ostream& Output::logResults(std::ostream &os) {
+            os  << std::left << std::setprecision(defaultPrecision)
+            << " Tournament Summary " << std::endl
             << divider << std::endl
             << "Rounds: " << GameConfig::GameConfig::rounds
             << "\tRepeats: " << GameConfig::GameConfig::repeats
@@ -98,14 +143,53 @@ namespace Output::Text {
             << "\tMutations: " << mutation
             << std::endl << std::endl;
 
-            os  << " Final Population Shares " << std::endl
-                << divider << std::endl;
+            outputProportionData(os);
 
-            os  << " Average Fitness " << std::endl
-                << divider << std::endl;
+            return os;
         }
 
+        std::ostream& Output::outputProportionData(std::ostream& os) const {
+            os  << " Final Population Shares " << std::endl
+                << divider << std::endl
+                << "Total Population = " << population << std::endl;
+            const auto& proportionHistory = tournament->getProportionHistory();
+            for (const auto& [strat, proportions] : proportionHistory) {
+                // Final population shares
+                // e.g. ALLC: 100 (10%)
+                os  << strategyToString(strat) << ": " << std::setw(defaultWidth)
+                    << population * proportions.back() << " (" << proportions.back()*100.0 << "%)" << std::endl;
+            }
 
+            constexpr int maxColumns = 10;
+            const int increment = generations <= maxColumns ? 1 : generations / (maxColumns - 1);
+            os << std::left << std::endl << " Population shares over time " << std::endl << divider << std::endl;
+            os << historicalDataOutConfig(proportionHistory, generations, increment);
+
+            return os;
+        }
+
+        std::ostream& Output::outputFitnessData(std::ostream& os) const {
+            os  << std::endl << " Final Average Fitness " << std::endl
+                << divider << std::endl;
+
+            const auto& fitnessHistory = tournament->getAvgFitnessHistory();
+            // Final Average fitness
+            // e.g. ALLC: (mean) ± (stdev) [CI]
+            Text::operator<<(os, generateFitnessStats()) << std::endl; // explicit call to avoid redefining
+
+            constexpr int maxColumns = 10;
+            const int increment = generations <= maxColumns ? 1 : generations / (maxColumns - 1);
+            os << historicalDataOutConfig(fitnessHistory, generations, increment);
+            return os;
+        }
+
+        std::vector<Statistics::OverallStats> Output::generateFitnessStats() const {
+            auto fitnessStats = generateStats(tournament->getAvgFitnessHistory());
+            std::ranges::sort(fitnessStats,
+                          [](const auto& a, const auto& b) { return a.mean > b.mean; });
+            return fitnessStats;
+
+        }
     }
 
 }

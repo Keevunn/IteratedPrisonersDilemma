@@ -1,6 +1,6 @@
 #include "../../include/Output/JSON.h"
 
-namespace Output::JSON {
+namespace Results::JSON {
     std::ostream& operator<<(std::ostream& os, const std::vector<Statistics::OverallStats>& leaderboard) {
         json output;
         output["leaderboard"] = json::array();
@@ -41,7 +41,7 @@ namespace Output::JSON {
         return ss.str();
     }
 
-    std::ostream &JSON::results(std::ostream &os) {
+    std::ostream &JSON::logResults(std::ostream &os) {
         json output;
         output["metadata"]["rounds"] = GameConfig::GameConfig::rounds;
         output["metadata"]["repeats"] = GameConfig::GameConfig::repeats;
@@ -52,7 +52,7 @@ namespace Output::JSON {
         output["metadata"]["payoffs"]["P"] = GameConfig::GameConfig::payoffs[2];
         output["metadata"]["payoffs"]["S"] = GameConfig::GameConfig::payoffs[3];
 
-        pushLeaderboard(output, generateLeaderboard());
+        pushLeaderboard(output, generateStats());
 
         pushPayoffMatrix(output, generatePayoffMatrix());
 

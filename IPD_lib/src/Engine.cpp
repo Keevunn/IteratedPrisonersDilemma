@@ -16,7 +16,7 @@ namespace Engine {
         makeOutput();
         const std::filesystem::path resultsFilePath = generateFileName();
         std::ofstream resultsFile(resultsFilePath);
-        output->results(resultsFile);
+        output->logResults(resultsFile);
         std::cout << "Results saved in: " << resultsFilePath << std::endl;
     }
 
@@ -156,16 +156,17 @@ namespace Engine {
         return results/filename;
     }
 
+    // Transfers ownership of tournament ptr
     void Engine::makeOutput() {
         if (format == "text")
-            output = (shouldEvolve) ? std::make_unique<Output::Text::Evolution::Evolution>(tournament, population, generations, mutation) :
-                std::make_unique<Output::Text::Text>(tournament);
+            output = (shouldEvolve) ? std::make_unique<Results::Text::Evolution::Output>(std::move(tournament), population, generations, mutation) :
+                std::make_unique<Results::Text::Output>(tournament);
         if (format == "csv")
-            output = (shouldEvolve) ? std::make_unique<Output::CSV::Evolution::Evolution>(tournament, population, generations, mutation) :
-                std::make_unique<Output::CSV::CSV>(tournament);
+            output = (shouldEvolve) ? std::make_unique<Results::CSV::Evolution::Output>(std::move(tournament), population, generations, mutation) :
+                std::make_unique<Results::CSV::Output>(tournament);
         if (format == "json")
-            output = (shouldEvolve) ? std::make_unique<Output::JSON::Evolution::Evolution>(tournament, population, generations, mutation) :
-                std::make_unique<Output::JSON::JSON>(tournament);
+            output = (shouldEvolve) ? std::make_unique<Results::JSON::Evolution::Output>(std::move(tournament), population, generations, mutation) :
+                std::make_unique<Results::JSON::Output>(tournament);
     }
 
 }
