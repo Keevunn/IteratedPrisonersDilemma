@@ -44,8 +44,6 @@ namespace Tournament {
 
         }
 
-
-
     }
 
     std::unordered_map<std::string, std::vector<double>>& Tournament::getTotalScores() { return totalScores; }

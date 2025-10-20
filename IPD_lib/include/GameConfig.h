@@ -62,7 +62,6 @@ namespace GameConfig {
         inline static int seed{};
         inline static double epsilon{};
         inline static std::array<double, 4> payoffs = {5, 3, 1, 0};
-        inline static std::string format = "text";
     };
 
 

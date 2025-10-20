@@ -1,21 +1,23 @@
 #include "../include/Engine.h"
 
-#include <filesystem>
 #include <fstream>
-#include <nlohmann/json.hpp>
 #include <stdexcept>
-#include <unordered_map>
 
 #include "../include/ConfigParser.h"
-#include "../include/MathUtil.h"
-#include "../include/RandomUtil.h"
-using json = nlohmann::json;
+#include "../include/Output/Text.h"
+#include "../include/Output/CSV.h"
+#include "../include/Output/JSON.h"
 
 namespace Engine {
 
     void Engine::runIPD() {
         tournament->simulateTournament();
-        outputResults();
+
+        makeOutput();
+        const std::filesystem::path resultsFilePath = generateFileName();
+        std::ofstream resultsFile(resultsFilePath);
+        output->results(resultsFile);
+        std::cout << "Results saved in: " << resultsFilePath << std::endl;
     }
 
     void Engine::parseArgs(const std::vector<std::string_view>& args) {
@@ -42,7 +44,7 @@ namespace Engine {
                     break;
                 case ArgTypes::FORMAT:
                     ConfigParser::validateFormat(args[++i]);
-                    GameConfig::GameConfig::format = args[i]; break;
+                    format = args[i]; break;
                 case ArgTypes::SAVE:
                     if (shouldLoad) throw std::invalid_argument("Cannot use --save and --load at the same time");
                     shouldSave = true;
@@ -126,8 +128,8 @@ namespace Engine {
         parseArgs(config);
     }
 
-    void Engine::outputResults() {
-        const std::filesystem::path results{"../../results"}; // to the root of the project - when run with cMake defaults to cmake-build-debug
+    std::filesystem::path Engine::generateFileName() {
+        const std::filesystem::path results{"..\\..\\results"}; // to the root of the project - when run with cMake defaults to cmake-build-debug
         std::filesystem::create_directory(results);
 
         std::string filename = "results_";
@@ -142,152 +144,25 @@ namespace Engine {
             std::strftime(suffix, 20, "%y-%m-%d_%H%M%S", &newtime);
             filename.append(suffix);
         }
-        std::ofstream file;
-        if (GameConfig::GameConfig::format == "text") {
-            filename.append(".txt\0");
-            file.open(results/filename);
-            outputText(file);
-        } else if (GameConfig::GameConfig::format == "csv") {
-            filename.append(".csv\0");
-            file.open(results/filename);
-            outputCSV(file);
-        } else if (GameConfig::GameConfig::format == "json") {
-            filename.append(".json\0");
-            file.open(results/filename);
-            outputJSON(file);
-        }
-        file.close();
-        std::cout << "Results saved in: " << filename << std::endl;
+
+        // Extensions
+        if (format == "text")
+            filename.append(".txt");
+        if (format == "csv")
+            filename.append(".csv");
+        if (format == "json")
+            filename.append(".json");
+
+        return results/filename;
     }
 
-    namespace Statistics {
-
-        std::ostream& operator<<(std::ostream& os, const OverallStats& stats) {
-            os << std::left
-                << std::setw(15) << stats.name
-                << std::setprecision(4) << stats.mean << " ± " << stats.stdDev
-                << " [" << stats.CI.first << "-" << stats.CI.second << "]";
-            return os;
-        }
-
-    }
-
-    std::unique_ptr<std::vector<Statistics::OverallStats>> Engine::generateLeaderboard() const {
-        std::unique_ptr<std::vector<Statistics::OverallStats>> leaderboard = std::make_unique<std::vector<Statistics::OverallStats>>();
-        const auto& totalScores = tournament->getTotalScores();
-        for (const auto& [strat, scores] : totalScores) {
-            Statistics::OverallStats stats{};
-            stats.name = strat;
-            stats.mean = MathUtil::calculateMean(scores, scores.size());
-            stats.stdDev = MathUtil::calculateStdDev(scores, scores.size(), stats.mean);
-            stats.CI = MathUtil::calculateCI(stats.mean, stats.stdDev, scores.size() );
-            leaderboard->emplace_back(stats);
-        }
-
-        std::ranges::sort(*leaderboard,
-                          [](const auto& a, const auto& b) { return a.mean > b.mean; });
-
-        return leaderboard;
-    }
-
-    std::ostream& Engine::outputText(std::ostream& os) {
-        os  << " Tournament Summary " << std::endl
-            << "--------------------" << std::endl
-            << "Rounds: " << GameConfig::GameConfig::rounds << "\t"
-            << "Repeats: " << GameConfig::GameConfig::repeats << "\t"
-            << "Seed: " << GameConfig::GameConfig::seed << "\t"
-            << "Epsilon: " << GameConfig::GameConfig::epsilon << std::endl
-            << "Payoffs: T=" << GameConfig::GameConfig::payoffs[0]
-            << ", R=" << GameConfig::GameConfig::payoffs[1]
-            << ", P=" << GameConfig::GameConfig::payoffs[2]
-            << ", S=" << GameConfig::GameConfig::payoffs[3]
-        << std::endl << std::endl;
-
-        outputLeaderboard(os);
-        outputPayoffMatrix(os);
-        return os;
-    }
-    // Output example: "ALLC      2.86 ± 0.12 [2.82–2.90]"
-
-    std::ostream& Engine::outputLeaderboard(std::ostream& os) const {
-        os  << "Leaderboard " << std::endl
-            << std::left << std::setw(3) << " " << std::setw(15) << "Strategy"
-            << "Mean ± stdev [95% CI]" << std::endl;
-
-        auto leaderboard = generateLeaderboard();
-
-        int i = 1;
-        for (const auto& stats : *leaderboard) {
-            os << std::left
-            << std::setw(3) << i++
-            << stats << std::endl;
-        }
-        return os << std::endl;
-
-    }
-
-    std::ostream& Engine::outputPayoffMatrix(std::ostream& os) {
-        os  << " Payoff matrix " << std::endl
-            << "---------------" << std::endl
-            << std::left << std::setw(10) << " " ;
-
-        for (const StrategyTypes& strat : strategies) {
-            os  << std::setw(10) << strategyToString(strat);
-        }
-
-        const auto& matches  = tournament->getMatchResults();
-        std::string header = "";
-        for (const auto& match : matches) {
-            if (header != match.player1->getName()) {
-                header = match.player1->getName();
-                os << std::endl << std::setw(10) << header;
-            }
-            os << std::setw(10) << match.p1Mean;
-        }
-
-        return os << std::endl;
-    }
-
-    // TODO add evolution parameters
-    std::ostream& Engine::outputCSV(std::ostream& os) {
-        os << "Strategy, Opponent, Mean, StdDev, CI_LB, CI_UB, Rounds, Repeats, Seed, Epsilon, T, R, P, S" << std::endl;
-        for (const auto& match : tournament->getMatchResults()) {
-            os << match;
-        }
-        return os;
-    }
-
-    std::ostream& Engine::outputJSON(std::ostream& os) {
-        json output;
-        output["metadata"] = {
-            {"rounds", GameConfig::GameConfig::rounds},
-            {"repeats", GameConfig::GameConfig::repeats},
-            {"seed", GameConfig::GameConfig::seed},
-            {"epsilon", GameConfig::GameConfig::epsilon},
-            {"payoffs",
-                {"T", GameConfig::GameConfig::payoffs[0]},
-                {"R", GameConfig::GameConfig::payoffs[1]},
-                {"P", GameConfig::GameConfig::payoffs[2]},
-                {"S", GameConfig::GameConfig::payoffs[3]},
-            }
-        };
-
-        const auto leaderboard = generateLeaderboard();
-
-        for (const auto& entry : *leaderboard) {
-            output["leaderboard"][entry.name]["mean"] = entry.mean;
-            output["leaderboard"][entry.name]["stdev"] = entry.stdDev;
-            output["leaderboard"][entry.name]["CI"] = entry.CI;
-        }
-
-        const auto& matches  = tournament->getMatchResults();
-        std::string header = "";
-        for (const auto& match : matches) {
-            output["pairwise"][match.player1->getName()][match.player2->getName()] = match.p1Mean;
-        }
-
-        os << output;
-        return os;
+    void Engine::makeOutput() {
+        if (format == "text")
+            output = std::make_unique<Output::Text::Text>(tournament);
+        if (format == "csv")
+            output = std::make_unique<Output::CSV::CSV>(tournament);
+        if (format == "json")
+            output = std::make_unique<Output::JSON::JSON>(tournament);
     }
 
 }

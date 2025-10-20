@@ -1,11 +1,13 @@
 #pragma once
 
+#include <filesystem>
 #include <string_view>
 #include <vector>
 
 #include "EvolutionaryTournament.h"
 #include "GameConfig.h"
 #include "Tournament.h"
+#include "Output/Output.h"
 
 using namespace GameConfig::Strategies;
 using namespace GameConfig::Args;
@@ -45,21 +47,16 @@ namespace Engine {
     private:
 
         void parseArgs(const std::vector<std::string_view>& args);
+
         void saveConfig(const std::string_view& fileName, const std::vector<std::string_view>& args);
         void loadConfig(const std::string_view& fileName);
-        // Output functions
-        void outputResults();
-        std::ostream& outputText(std::ostream& os);
-        std::unique_ptr<std::vector<Statistics::OverallStats>> generateLeaderboard() const;
-        std::ostream& outputLeaderboard(std::ostream& os) const;
 
-        std::ostream& outputCSV(std::ostream& os);
-        std::ostream& outputPayoffMatrix(std::ostream& os);
-
-        std::ostream& outputJSON(std::ostream& os);
+        void makeOutput();
+        std::filesystem::path generateFileName();
 
         // Configuration data
         std::vector<StrategyTypes> strategies;
+        std::string format = "text";
 
         // Flags
         bool shouldEvolve = false;
@@ -71,6 +68,7 @@ namespace Engine {
 
         // Simulation data
         std::unique_ptr<Tournament::Tournament> tournament;
+        std::unique_ptr<Output::Output> output;
 
     };
 }
