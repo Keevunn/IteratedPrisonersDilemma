@@ -18,4 +18,17 @@ namespace Output::JSON {
         void pushLeaderboard(json& obj, const std::vector<Statistics::OverallStats>& leaderboard);
         void pushPayoffMatrix(json& obj, const std::unordered_map<StrategyTypes, std::vector<double>>& payoffMatrix);
     };
+
+    namespace Evolution {
+        class Evolution : public JSON {
+        public:
+            explicit Evolution(std::unique_ptr<Tournament::Tournament>& tournament, const int population, const int generations, const int mutation) :
+                JSON(tournament), population(population), generations(generations), mutation(mutation) {}
+
+            std::ostream& results(std::ostream& os) override;
+
+        private:
+            int population; int generations; double mutation;
+        };
+    }
 }

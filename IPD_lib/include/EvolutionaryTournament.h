@@ -12,6 +12,7 @@ namespace Tournament::Evolution {
 
         void simulateTournament() override;
         std::unordered_map<StrategyTypes, std::vector<double>>& getProportionHistory();
+        std::unordered_map<StrategyTypes, std::vector<double>>& getAvgFitnessHistory();
 
     private:
         void runTournamentMatches();
@@ -27,5 +28,6 @@ namespace Tournament::Evolution {
         std::unordered_map<StrategyTypes, double> strategyProportion;
         std::unordered_map<StrategyTypes, double> strategyFitness;
         std::unordered_map<StrategyTypes, std::vector<double>> proportionHistory; // For analysis
+        std::unordered_map<StrategyTypes, std::vector<double>> avgFitnessHistory; // For analysis
     };
 }

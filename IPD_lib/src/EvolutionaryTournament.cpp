@@ -21,6 +21,8 @@ namespace Tournament::Evolution {
 
     std::unordered_map<StrategyTypes, std::vector<double>>& EvolutionaryTournament::getProportionHistory() { return proportionHistory; }
 
+    std::unordered_map<StrategyTypes, std::vector<double>> & EvolutionaryTournament::getAvgFitnessHistory() { return avgFitnessHistory; }
+
     void EvolutionaryTournament::runTournamentMatches() {
         for (auto& match : matchResults) {
             std::vector<double> p1MeanPayoff{};
@@ -41,7 +43,6 @@ namespace Tournament::Evolution {
             match.p1Mean = MathUtil::calculateMean(p1MeanPayoff, GameConfig::GameConfig::repeats);
             match.p2Mean = MathUtil::calculateMean(p2MeanPayoff, GameConfig::GameConfig::repeats);
         }
-
     }
 
     void EvolutionaryTournament::initialise() {
@@ -50,6 +51,7 @@ namespace Tournament::Evolution {
             strategyProportion[strat] = equalShare;
             strategyFitness[strat] = 0.0;
             proportionHistory[strat] = {};
+            avgFitnessHistory[strat] = {};
         }
     }
 
@@ -100,8 +102,10 @@ namespace Tournament::Evolution {
     }
 
     void EvolutionaryTournament::updateHistory() {
-        for (const auto& [strat, proportion] : strategyProportion)
+        for (const auto& [strat, proportion] : strategyProportion) {
             proportionHistory.at(strat).emplace_back(proportion);
+            avgFitnessHistory.at(strat).emplace_back(strategyFitness.at(strat));
+        }
     }
 }
 

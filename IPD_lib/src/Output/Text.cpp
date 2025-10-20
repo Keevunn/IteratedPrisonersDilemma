@@ -66,7 +66,46 @@ namespace Output::Text {
     }
 
 
+    namespace Evolution {
+
+        std::ostream& operator<<(std::ostream& os, const std::vector<double>& row) {
+            for (const auto& entry : row)
+                os << std::setw(defaultWidth) << std::setprecision(defaultPrecision) << entry;
+
+            return os << std::endl;
+        }
+
+        std::ostream& operator<<(std::ostream& os, const std::unordered_map<StrategyTypes, std::vector<double>>& dataRows) {
+            for (const auto& [strat, row] : dataRows)
+                os << std::setw(defaultWidth) << strategyToString(strat) << row;
+
+            return os << std::endl;
+        }
+
+        std::ostream &Evolution::results(std::ostream &os) {
+            os  << " Tournament Summary " << std::endl
+            << divider << std::endl
+            << "Rounds: " << GameConfig::GameConfig::rounds
+            << "\tRepeats: " << GameConfig::GameConfig::repeats
+            << "\tSeed: " << GameConfig::GameConfig::seed
+            << "\tEpsilon: " << GameConfig::GameConfig::epsilon << std::endl
+            << "Payoffs: T=" << GameConfig::GameConfig::payoffs[0]
+            << ", R=" << GameConfig::GameConfig::payoffs[1]
+            << ", P=" << GameConfig::GameConfig::payoffs[2]
+            << ", S=" << GameConfig::GameConfig::payoffs[3] << std::endl
+            << "Population: " << population
+            <<"\tGenerations: " << generations
+            << "\tMutations: " << mutation
+            << std::endl << std::endl;
+
+            os  << " Final Population Shares " << std::endl
+                << divider << std::endl;
+
+            os  << " Average Fitness " << std::endl
+                << divider << std::endl;
+        }
 
 
+    }
 
 }

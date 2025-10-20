@@ -158,11 +158,14 @@ namespace Engine {
 
     void Engine::makeOutput() {
         if (format == "text")
-            output = std::make_unique<Output::Text::Text>(tournament);
+            output = (shouldEvolve) ? std::make_unique<Output::Text::Evolution::Evolution>(tournament, population, generations, mutation) :
+                std::make_unique<Output::Text::Text>(tournament);
         if (format == "csv")
-            output = std::make_unique<Output::CSV::CSV>(tournament);
+            output = (shouldEvolve) ? std::make_unique<Output::CSV::Evolution::Evolution>(tournament, population, generations, mutation) :
+                std::make_unique<Output::CSV::CSV>(tournament);
         if (format == "json")
-            output = std::make_unique<Output::JSON::JSON>(tournament);
+            output = (shouldEvolve) ? std::make_unique<Output::JSON::Evolution::Evolution>(tournament, population, generations, mutation) :
+                std::make_unique<Output::JSON::JSON>(tournament);
     }
 
 }
