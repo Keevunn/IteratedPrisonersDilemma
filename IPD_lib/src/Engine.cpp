@@ -13,10 +13,10 @@ namespace Engine {
     void Engine::runIPD() {
         tournament->simulateTournament();
 
-        makeOutput();
+
         const std::filesystem::path resultsFilePath = generateFileName();
         std::ofstream resultsFile(resultsFilePath);
-        output->logResults(resultsFile);
+        outputResults(resultsFile);
         std::cout << "Results saved in: " << resultsFilePath << std::endl;
     }
 
@@ -157,17 +157,39 @@ namespace Engine {
     }
 
     // Transfers ownership of tournament ptr
-    void Engine::makeOutput() {
-        if (format == "text")
-            output = (shouldEvolve) ? std::make_unique<Results::Text::Evolution::Output>(std::move(tournament), population, generations, mutation) :
-                std::make_unique<Results::Text::Output>(tournament);
-        if (format == "csv")
-            output = (shouldEvolve) ? std::make_unique<Results::CSV::Evolution::Output>(std::move(tournament), population, generations, mutation) :
-                std::make_unique<Results::CSV::Output>(tournament);
-        if (format == "json")
-            output = (shouldEvolve) ? std::make_unique<Results::JSON::Evolution::Output>(std::move(tournament), population, generations, mutation) :
-                std::make_unique<Results::JSON::Output>(tournament);
-    }
+    std::ofstream& Engine::outputResults(std::ofstream& file) {
+        if (shouldEvolve) {
+            auto evoTournament = std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>(
+                                    static_cast<Tournament::Evolution::EvolutionaryTournament*>( tournament.release()) );
 
+            if (format == "text") {
+                auto out = Results::Text::Evolution::Output(std::move(evoTournament), population, generations, mutation);
+                file << out;
+            }
+            if (format == "csv") {
+                auto out = Results::CSV::Evolution::Output(std::move(evoTournament), population, generations, mutation);
+                file << out;
+            }
+            if (format == "json") {
+                auto out = Results::CSV::Evolution::Output(std::move(evoTournament), population, generations, mutation);
+                file << out;
+            }
+        }
+        else {
+            if (format == "text") {
+                auto out = Results::Text::Output(std::move(tournament));
+                file << out;
+            }
+            else if (format == "csv") {
+                auto out = Results::CSV::Output(std::move(tournament));
+                file << out;
+            }
+            else if (format == "json") {
+                auto out = Results::JSON::Output(std::move(tournament));
+                file << out;
+            }
+        }
+        return file;
+    }
 }
 

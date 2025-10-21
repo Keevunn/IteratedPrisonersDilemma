@@ -1,0 +1,84 @@
+#include "../../include/Output/StatisticsUtil.h"
+
+#include <algorithm>
+
+#include "../../include/MathUtil.h"
+
+#include <iomanip>
+
+namespace Statistics {
+
+     std::ostream& operator<<(std::ostream& os, const OverallStatsStruct& stats) {
+        os << std::left << std::setprecision(4)
+            << std::setw(15) << stats.name
+            << stats.mean << ", 95% CI [" << stats.CI.first << ", " << stats.CI.second << "]";
+        return os;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const std::vector<OverallStats>& rankedData){
+         int i = 1;
+         for (const auto& stats : rankedData) {
+             os << std::left << i++
+             << std::setw(5) << "."
+             << stats << std::endl;
+         }
+         return os;
+     }
+
+    std::vector<OverallStats> generateStats(const std::unordered_map<StrategyTypes, std::vector<double>>& data) {
+        std::vector<OverallStats> stats;
+        for (const auto& [strat, values] : data) {
+            OverallStats entry{};
+            const int rpts = static_cast<int>(values.size());
+            entry.name = strategyToString(strat);
+            entry.mean = MathUtil::calculateMean(values, rpts);
+            const double stdDev = MathUtil::calculateStdDev(values, rpts, entry.mean);
+            entry.CI = MathUtil::calculateCI(entry.mean, stdDev, rpts );
+            stats.emplace_back(entry);
+        }
+        return stats;
+    }
+
+    std::vector<OverallStats> generateLeaderboard(const std::unique_ptr<Tournament::Tournament>& tournament) {
+        auto leaderboard = generateStats(tournament->getTotalScores());
+        std::ranges::sort(leaderboard,
+                          [](const auto& a, const auto& b) { return a.mean > b.mean; });
+        return leaderboard;
+    }
+
+    std::unordered_map<StrategyTypes, std::vector<double>> generatePayoffMatrix(const std::unique_ptr<Tournament::Tournament>& tournament) {
+        std::unordered_map<StrategyTypes, std::vector<double>> payoffMatrix;
+        const auto& matches = tournament->getMatchResults();
+        const int rowLen = static_cast<int>(std::sqrt(matches.size())); // matches.size() = (num of strategies)^2
+        int row = 0; int col = 0;
+
+        for (const auto& match : matches) {
+            if (col >= rowLen) {
+                row += 1;
+                col = 0;
+            }
+
+            StrategyTypes p1Strat = match.player1->getStrategy();
+            StrategyTypes p2Strat = match.player2->getStrategy();
+            if (!payoffMatrix.contains(p1Strat)) {
+                payoffMatrix[p1Strat] = std::vector(rowLen, 0.0);
+            }
+            payoffMatrix[p1Strat][col] = match.p1Mean;
+
+            if (!payoffMatrix.contains(p2Strat)) {
+                payoffMatrix[p2Strat] = std::vector(rowLen, 0.0);
+            }
+            payoffMatrix[p2Strat][row] = (payoffMatrix[p2Strat][row] + match.p2Mean) / 2; // To add in the player 2 mean of the reverse match
+
+            col += 1;
+        }
+        return payoffMatrix;
+    }
+
+    std::vector<OverallStats> generateFitnessStats(const std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>& tournament) {
+        auto fitnessStats = generateStats(tournament->getAvgFitnessHistory());
+        std::ranges::sort(fitnessStats,
+                      [](const auto& a, const auto& b) { return a.mean > b.mean; });
+        return fitnessStats;
+    }
+}

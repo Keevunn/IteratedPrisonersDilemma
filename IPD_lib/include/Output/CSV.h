@@ -2,24 +2,22 @@
 #include "Results.h"
 
 namespace Results::CSV {
-    class Output : public ::Results::Output {
+    class Output : public Results::Output {
     public:
-        explicit CSV(std::unique_ptr<Tournament::Tournament>& tournament) : Output(tournament) {}
+        explicit Output(std::unique_ptr<Tournament::Tournament>&& tournament) : ::Results::Output(std::move(tournament)) {}
 
         std::ostream& logResults(std::ostream& os) override;
 
     };
 
     namespace Evolution {
-        class Evolution : public CSV {
+        class Output : public Results::Evolution::Output {
         public:
-            explicit Evolution(std::unique_ptr<Tournament::Tournament>& tournament, const int population, const int generations, const int mutation) :
-                CSV(tournament), population(population), generations(generations), mutation(mutation) {}
+             Output(std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>&& tournament, const int population, const int generations, const double mutation) :
+                Results::Evolution::Output(std::move(tournament), population, generations, mutation) {}
 
             std::ostream& logResults(std::ostream& os) override;
 
-        private:
-            int population; int generations; double mutation;
         };
     }
 }

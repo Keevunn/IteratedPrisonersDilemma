@@ -30,15 +30,30 @@ namespace Results {
         virtual ~Output() = default;
         explicit Output(std::unique_ptr<Tournament::Tournament>&& tournament) : tournament(std::move(tournament)) {}
 
-        virtual std::ostream& logResults(std::ostream& os);
+        virtual std::ostream& logResults(std::ostream& os) {return os;}
 
-        friend std::ostream& operator<<(std::ostream& os, Output& output);
+        friend std::ostream& operator<<(std::ostream& os, Output& output) { return output.logResults(os); }
 
     protected:
-        [[nodiscard]] static std::vector<Statistics::OverallStats> generateStats(const std::unordered_map<StrategyTypes, std::vector<double>>& data) ;
-        [[nodiscard]] std::unordered_map<StrategyTypes, std::vector<double>> generatePayoffMatrix() const;
-
         std::unique_ptr<Tournament::Tournament> tournament;
 
     };
+
+    namespace Evolution {
+
+        class Output {
+        public:
+            virtual ~Output() = default;
+            Output(std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>&& tournament, const int population, const int generations, const double mutation) :
+               tournament(std::move(tournament)), population(population), generations(generations), mutation(mutation) {}
+
+            virtual std::ostream& logResults(std::ostream& os) {return os;}
+
+            friend std::ostream& operator<<(std::ostream& os, Output& output) { return output.logResults(os); }
+        protected:
+            std::unique_ptr<Tournament::Evolution::EvolutionaryTournament> tournament;
+            const int population; const int generations; const double mutation;
+
+        };
+    }
 }

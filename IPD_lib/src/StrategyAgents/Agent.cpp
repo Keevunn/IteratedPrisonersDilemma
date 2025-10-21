@@ -13,7 +13,7 @@ namespace StrategyAgents {
     void Agent::setScore(const double value) { score = value; }
     void Agent::addToScore(const double value) { score += value; }
 
-    std::string_view Agent::getName() const { return name; }
+    std::string Agent::getName() const { return name; }
 
     StrategyTypes Agent::getStrategy() const { return strategy; }
 

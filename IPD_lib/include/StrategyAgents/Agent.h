@@ -30,7 +30,7 @@ namespace StrategyAgents {
         void setScore(double value);
         virtual void addToScore(double value);
 
-        [[nodiscard]] std::string_view getName() const;
+        [[nodiscard]] std::string getName() const;
         [[nodiscard]] StrategyTypes getStrategy() const;
 
         friend std::ostream& operator<<(std::ostream& os, const Agent& agent);

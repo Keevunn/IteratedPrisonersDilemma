@@ -1,4 +1,7 @@
 #include "../include/Tournament.h"
+
+#include <sstream>
+
 #include "../include/Match.h"
 
 #include "../include/StrategyAgents/ALLC.h"
@@ -15,39 +18,30 @@
 namespace Tournament {
 
      // Outputs 2 rows for CSV file
-     // Strategy, Opponent, mean, stdDev, CI_LB, CI_UB, rounds, repeats, epsilon, T, R, P, S
+     // Strategy, Opponent, mean, CI_LB, CI_UB, rounds, repeats, seed, epsilon, payoffs
      std::ostream& operator<<(std::ostream& os, const MatchResultsStruct& results){
-         os << results.player1->getName() << ", "
-             << results.player2->getName() << ", "
-             << results.p1Mean << ", "
-             << results.p1StdDev << ", "
-             << results.p1CI.first << ", "
-             << results.p1CI.second << ", "
-             << GameConfig::GameConfig::rounds << ", "
-             << GameConfig::GameConfig::repeats << ", "
-             << GameConfig::GameConfig::seed << ", "
-             << GameConfig::GameConfig::epsilon << ", "
-             << GameConfig::GameConfig::payoffs[0] << ", "
-             << GameConfig::GameConfig::payoffs[1] << ", "
-             << GameConfig::GameConfig::payoffs[2] << ", "
-             << GameConfig::GameConfig::payoffs[3]
-             << std::endl;
+         std::ostringstream metadata;
+         {
+             const std::string payoffs = "\"" + std::to_string(GameConfig::GameConfig::payoffs[0]) + "," +
+                                         std::to_string(GameConfig::GameConfig::payoffs[1]) + "," +
+                                         std::to_string(GameConfig::GameConfig::payoffs[2]) + "," +
+                                         std::to_string(GameConfig::GameConfig::payoffs[3]) + "\"";
+             metadata << GameConfig::GameConfig::rounds << "," << GameConfig::GameConfig::repeats << ","
+                    << GameConfig::GameConfig::seed << "," << GameConfig::GameConfig::epsilon << payoffs;
+         }
+         os << results.player1->getName() << ","
+             << results.player2->getName() << ","
+             << results.p1Mean << ","
+             << results.p1CI.first << ","
+             << results.p1CI.second << ","
+             << metadata.str() << std::endl;
 
-         os << results.player2->getName() << ", "
-             << results.player1->getName() << ", "
-             << results.p2Mean << ", "
-             << results.p2StdDev << ", "
-             << results.p2CI.first << ", "
-             << results.p2CI.second << ", "
-             << GameConfig::GameConfig::rounds << ", "
-             << GameConfig::GameConfig::repeats << ", "
-             << GameConfig::GameConfig::seed << ", "
-             << GameConfig::GameConfig::epsilon << ", "
-             << GameConfig::GameConfig::payoffs[0] << ", "
-             << GameConfig::GameConfig::payoffs[1] << ", "
-             << GameConfig::GameConfig::payoffs[2] << ", "
-             << GameConfig::GameConfig::payoffs[3]
-             << std::endl;
+         os << results.player2->getName() << ","
+             << results.player1->getName() << ","
+             << results.p2Mean << ","
+             << results.p2CI.first << ","
+             << results.p2CI.second << ","
+             << metadata.str() << std::endl;
 
          return os;
      }
@@ -70,12 +64,12 @@ namespace Tournament {
             }
             // Calculate mean, stDev, CI for each match
             match.p1Mean = MathUtil::calculateMean(player1Scores, GameConfig::GameConfig::repeats);
-            match.p1StdDev = MathUtil::calculateStdDev(player1Scores, GameConfig::GameConfig::repeats, match.p1Mean);
-            match.p1CI = MathUtil::calculateCI( match.p1Mean, match.p1StdDev, GameConfig::GameConfig::repeats );
+            const auto p1StdDev = MathUtil::calculateStdDev(player1Scores, GameConfig::GameConfig::repeats, match.p1Mean);
+            match.p1CI = MathUtil::calculateCI( match.p1Mean, p1StdDev, GameConfig::GameConfig::repeats );
 
             match.p2Mean = MathUtil::calculateMean(player2Scores, GameConfig::GameConfig::repeats);
-            match.p2StdDev = MathUtil::calculateStdDev(player2Scores, GameConfig::GameConfig::repeats, match.p2Mean);
-            match.p2CI = MathUtil::calculateCI( match.p2Mean, match.p2StdDev, GameConfig::GameConfig::repeats );
+            const auto p2StdDev = MathUtil::calculateStdDev(player2Scores, GameConfig::GameConfig::repeats, match.p2Mean);
+            match.p2CI = MathUtil::calculateCI( match.p2Mean, p2StdDev, GameConfig::GameConfig::repeats );
 
             std::ranges::copy(player1Scores, back_inserter(totalScores[match.player1->getStrategy()]) );
             std::ranges::copy(player2Scores, back_inserter(totalScores[match.player2->getStrategy()]) );

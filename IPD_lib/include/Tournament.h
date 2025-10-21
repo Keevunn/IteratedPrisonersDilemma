@@ -16,8 +16,8 @@ namespace Tournament {
         std::unique_ptr<StrategyAgents::Agent>& player1;
         std::unique_ptr<StrategyAgents::Agent>& player2;
 
-        double p1Mean{}; double p1StdDev{}; std::pair<double,double> p1CI {};
-        double p2Mean{}; double p2StdDev{}; std::pair<double,double> p2CI {};
+        double p1Mean{}; std::pair<double,double> p1CI {};
+        double p2Mean{}; std::pair<double,double> p2CI {};
 
         friend std::ostream& operator<<(std::ostream& os, const MatchResultsStruct& results);
     } MatchResults;
