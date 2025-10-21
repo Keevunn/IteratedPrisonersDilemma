@@ -38,8 +38,8 @@ namespace MathUtil {
 
     std::pair<double,double> calculateCI(const double mean, const double stdDev, const int size) {
         const double critReg = NORMAL_DIST_CONSTANT * calculateStdErr(stdDev, size);
-
-        return {mean - critReg, mean + critReg};
+        double resLower = (mean-critReg);
+        return {(resLower < 0) ? 0 : resLower, mean + critReg};
     }
 
 }

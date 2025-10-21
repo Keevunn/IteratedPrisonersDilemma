@@ -86,6 +86,8 @@ namespace Results::Text {
             const auto generations = historicalDataStruct.generations;
             const auto increment = historicalDataStruct.increment;
 
+            constexpr double DISPLAY_THRESHOLD = 1e-6;
+
             for (const auto& [strat, data] : historicalData) {
                 body << std::setw(defaultWidth) << strategyToString(strat);
 
@@ -93,11 +95,14 @@ namespace Results::Text {
                     if (!isHeaderComplete) {
                         header << std::setw(defaultWidth) << pos;
                     }
-                    body << std::setw(defaultWidth) << data[pos];
+                    std::string value = (data[pos] < DISPLAY_THRESHOLD) ? std::string{"~0"} : std::to_string(data[pos]);
+                    body << std::setw(defaultWidth) << value;
                     hasPrintedFinalCol = (pos == generations - 1);
                 }
-                if (!hasPrintedFinalCol)
-                    body << data[generations - 1];
+                if (!hasPrintedFinalCol) {
+                    std::string value = (data[generations - 1] < DISPLAY_THRESHOLD) ? std::string{"~0"} : std::to_string(data[generations - 1]);
+                    body << value;
+                }
 
                 // after the first complete iteration of the inner for loop, header will be complete
                 if (!isHeaderComplete) {
@@ -117,16 +122,16 @@ namespace Results::Text {
             << " Tournament Summary " << std::endl
             << divider << std::endl
             << "Rounds: " << GameConfig::GameConfig::rounds
-            << "\tRepeats: " << GameConfig::GameConfig::repeats
-            << "\tSeed: " << GameConfig::GameConfig::seed
-            << "\tEpsilon: " << GameConfig::GameConfig::epsilon << std::endl
+            << "    Repeats: " << GameConfig::GameConfig::repeats
+            << "    Seed: " << GameConfig::GameConfig::seed
+            << "    Epsilon: " << GameConfig::GameConfig::epsilon << std::endl
             << "Payoffs: T=" << GameConfig::GameConfig::payoffs[0]
             << ", R=" << GameConfig::GameConfig::payoffs[1]
             << ", P=" << GameConfig::GameConfig::payoffs[2]
             << ", S=" << GameConfig::GameConfig::payoffs[3] << std::endl
             << "Population: " << population
-            <<"\tGenerations: " << generations
-            << "\tMutations: " << mutation
+            <<"    Generations: " << generations
+            << "    Mutations: " << mutation
             << std::endl;
 
             outputProportionData(os);
@@ -141,11 +146,21 @@ namespace Results::Text {
                 << "Total Population = " << population << std::endl;
 
             const auto& finalGenerationData = tournament->getGenerationData(generations-1);
+            constexpr double DISPLAY_THRESHOLD = 1e-6; // Only show if proportion > 0.0001%
+
             for (const auto& strategyValues : finalGenerationData) {
                 // Final population shares
                 // e.g. ALLC: 100 (10%)
-                os  << std::setw(defaultWidth) << strategyToString(strategyValues.strategy) + ": "
-                    << population * strategyValues.proportion << " (" << strategyValues.proportion*100.0 << "%)" << std::endl;
+                double absolutePopulation = population * strategyValues.proportion;
+                double percentage = strategyValues.proportion * 100.0;
+
+                if (strategyValues.proportion < DISPLAY_THRESHOLD) {
+                    os  << std::setw(defaultWidth) << strategyToString(strategyValues.strategy) + ": "
+                        << "~0 (~0%)" << std::endl;
+                } else {
+                    os  << std::setw(defaultWidth) << strategyToString(strategyValues.strategy) + ": "
+                        << absolutePopulation << " (" << percentage << "%)" << std::endl;
+                }
             }
 
             const auto& proportionHistory = tournament->getProportionHistory();
@@ -167,7 +182,7 @@ namespace Results::Text {
             os << generateFitnessStats(tournament) << std::endl; // explicit call to avoid redefining
 
             constexpr int maxColumns = 10;
-            const int increment = generations <= maxColumns ? 1 : generations / (maxColumns - 1);
+            const int increment = generations <= maxColumns ? 1 : generations / (maxColumns - 2);
             os << std::left << std::endl << " Average fitness over time " << std::endl << divider << std::endl;
             os << historicalDataOutConfig(fitnessHistory, generations, increment);
             return os;

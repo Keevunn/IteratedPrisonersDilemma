@@ -171,7 +171,7 @@ namespace Engine {
                 file << out;
             }
             if (format == "json") {
-                auto out = Results::CSV::Evolution::Output(std::move(evoTournament), population, generations, mutation);
+                auto out = Results::JSON::Evolution::Output(std::move(evoTournament), population, generations, mutation);
                 file << out;
             }
         }
