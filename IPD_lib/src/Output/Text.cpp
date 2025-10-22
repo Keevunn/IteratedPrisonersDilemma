@@ -21,17 +21,17 @@ namespace Results::Text {
         return os << std::endl;
     }
 
-    std::ostream& operator<<(std::ostream& os, const std::unordered_map<StrategyTypes, std::vector<double>>& payoffMatrix) {
+    std::ostream& operator<<(std::ostream& os, const std::map<StrategyTypes, std::vector<double>>& payoffMatrix) {
         // player 2 header row
-        os << std::left << std::setw(defaultWidth) << " ";
-        for (const StrategyTypes& strat : payoffMatrix | std::views::keys) {
-            os  << std::setw(defaultWidth) << strategyToString(strat);
-        }
-        os << std::endl;
-
+        std:: ostringstream header;
+        std:: ostringstream body;
+        header << std::left << std::setw(defaultWidth) << " ";
+        body << std::left << std::setprecision(defaultPrecision);
         for (const auto& [strat, dataRow] : payoffMatrix) {
-            os << std::setw(defaultWidth) << strategyToString(strat) << dataRow;
+            header  << std::setw(defaultWidth) << strategyToString(strat);
+            body << std::setw(defaultWidth) << strategyToString(strat) << dataRow;
         }
+        os << header.str() << std::endl << body.str();
 
         return os << std::endl;
     }

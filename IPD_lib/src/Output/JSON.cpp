@@ -14,7 +14,7 @@ namespace Results::JSON {
         return os << output;
     }
 
-    std::ostream& operator<<(std::ostream& os, const std::unordered_map<StrategyTypes, std::vector<double>>& payoffMatrix) {
+    std::ostream& operator<<(std::ostream& os, const std::map<StrategyTypes, std::vector<double>>& payoffMatrix) {
         json output;
         std::vector<StrategyTypes> strategies;
         for (const StrategyTypes& strat : payoffMatrix | std::views::keys) {
@@ -66,7 +66,7 @@ namespace Results::JSON {
         }
     }
 
-    void Output::pushPayoffMatrix(json &obj, const std::unordered_map<StrategyTypes, std::vector<double>>& payoffMatrix) {
+    void Output::pushPayoffMatrix(json &obj, const std::map<StrategyTypes, std::vector<double>>& payoffMatrix) {
         std::vector<StrategyTypes> strategies;
         for (const StrategyTypes& strat : payoffMatrix | std::views::keys) {
             strategies.push_back(strat);

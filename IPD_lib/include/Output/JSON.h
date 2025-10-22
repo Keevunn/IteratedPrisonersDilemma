@@ -18,7 +18,7 @@ namespace Results::JSON {
 
     private:
         void pushLeaderboard(json& obj, const std::vector<OverallStats>& leaderboard);
-        void pushPayoffMatrix(json& obj, const std::unordered_map<StrategyTypes, std::vector<double>>& payoffMatrix);
+        void pushPayoffMatrix(json& obj, const std::map<StrategyTypes, std::vector<double>>& payoffMatrix);
     };
 
     namespace Evolution {

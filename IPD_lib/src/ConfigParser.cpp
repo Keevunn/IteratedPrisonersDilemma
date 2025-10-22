@@ -40,7 +40,9 @@ namespace Engine::ConfigParser {
             {"PAVLOV", StrategyTypes::PAVLOV},
             {"RND0.3", StrategyTypes::RND03},
             {"CONTRITE", StrategyTypes::CONTRITE},
-            {"PROBER", StrategyTypes::PROBER}
+            {"PROBER", StrategyTypes::PROBER},
+            {"CAUTIOUS", StrategyTypes::CAUTIOUS},
+            {"FBF", StrategyTypes::FBF}
         };
 
     }

@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "../include/Match.h"
+#include "../include/MathUtil.h"
 
 #include "../include/StrategyAgents/ALLC.h"
 #include "../include/StrategyAgents/ALLD.h"
@@ -12,8 +13,8 @@
 #include "../include/StrategyAgents/PROBER.h"
 #include "../include/StrategyAgents/RNDp.h"
 #include "../include/StrategyAgents/TFT.h"
-
-#include "../include/MathUtil.h"
+#include "../include/StrategyAgents/CAUTIOUS.h"
+#include "../include/StrategyAgents/FBF.h"
 
 namespace Tournament {
 
@@ -124,6 +125,10 @@ namespace Tournament {
             return std::make_unique<StrategyAgents::RNDp>(); break;
         case (StrategyTypes::TFT):
             return std::make_unique<StrategyAgents::TFT>(); break;
+        case (StrategyTypes::CAUTIOUS):
+            return std::make_unique<StrategyAgents::CAUTIOUS>(); break;
+        case (StrategyTypes::FBF):
+            return std::make_unique<StrategyAgents::FBF>(); break;
         default:
             throw std::invalid_argument("Invalid Strategy Type"); // Should never be able to reach this line
         }

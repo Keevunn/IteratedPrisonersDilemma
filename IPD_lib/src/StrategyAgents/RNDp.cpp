@@ -5,8 +5,8 @@
 namespace StrategyAgents {
 
     ResponseType RNDp::decide(const ResponseType& lastResponse) {
-        if (probabilityC == 1) return ResponseType::C;
-        if (probabilityC == 0) return ResponseType::D;
+        if (probabilityC == 1) return noisyResponse(ResponseType::C);
+        if (probabilityC == 0) return noisyResponse(ResponseType::D);
         std::uniform_real_distribution<double> distribution(0, 1);
         std::mt19937 gen(GameConfig::GameConfig::seed);
 

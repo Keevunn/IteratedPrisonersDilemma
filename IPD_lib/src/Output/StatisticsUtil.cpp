@@ -52,12 +52,13 @@ namespace Statistics {
          return data;
     }
 
-    std::unordered_map<StrategyTypes, std::vector<double>> generatePayoffMatrix(const std::unique_ptr<Tournament::Tournament>& tournament) {
-        std::unordered_map<StrategyTypes, std::vector<double>> payoffMatrix;
+    std::map<StrategyTypes, std::vector<double>> generatePayoffMatrix(const std::unique_ptr<Tournament::Tournament>& tournament) {
+        std::map<StrategyTypes, std::vector<double>> payoffMatrix;
         const auto& matches = tournament->getMatchResults();
         const int rowLen = static_cast<int>(std::sqrt(matches.size())); // matches.size() = (num of strategies)^2
         int row = 0; int col = 0;
 
+         // Relies on consistent ordering of keys
         for (const auto& match : matches) {
             if (col >= rowLen) {
                 row += 1;
@@ -67,14 +68,20 @@ namespace Statistics {
             StrategyTypes p1Strat = match.player1->getStrategy();
             StrategyTypes p2Strat = match.player2->getStrategy();
             if (!payoffMatrix.contains(p1Strat)) {
-                payoffMatrix[p1Strat] = std::vector(rowLen, 0.0);
+                payoffMatrix[p1Strat] = std::vector(rowLen, -1.0);
             }
-            payoffMatrix[p1Strat][col] = match.p1Mean;
+            // if there's a value in there already (i.e. not 0) average the two
+            payoffMatrix[p1Strat][col] = (payoffMatrix[p1Strat][col] >= 0)
+                                            ? (payoffMatrix[p1Strat][col] + match.p1Mean) / 2
+                                            : match.p1Mean;
 
             if (!payoffMatrix.contains(p2Strat)) {
-                payoffMatrix[p2Strat] = std::vector(rowLen, 0.0);
+                payoffMatrix[p2Strat] = std::vector(rowLen, -1.0);
             }
-            payoffMatrix[p2Strat][row] = (payoffMatrix[p2Strat][row] + match.p2Mean) / 2; // To add in the player 2 mean of the reverse match
+            // To add in the player 2 mean of the reverse match
+            payoffMatrix[p2Strat][row] = (payoffMatrix[p2Strat][row] >= 0)
+                                            ? (payoffMatrix[p2Strat][row] + match.p2Mean) / 2
+                                            : match.p2Mean;
 
             col += 1;
         }

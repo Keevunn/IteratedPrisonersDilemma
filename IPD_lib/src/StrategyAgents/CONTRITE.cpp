@@ -14,7 +14,7 @@ namespace StrategyAgents {
         else
             original = (lastResponse == ResponseType::INVALID) ? initialResponse : lastResponse;
 
-        ResponseType newResponse = noisyResponse(original);
+        const ResponseType newResponse = noisyResponse(original);
 
         if (original != newResponse) shouldApologise = true;
         return newResponse;

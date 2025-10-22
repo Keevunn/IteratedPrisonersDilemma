@@ -24,7 +24,8 @@ namespace Results::CSV {
                                             std::to_string(GameConfig::GameConfig::payoffs[1]) + "," +
                                             std::to_string(GameConfig::GameConfig::payoffs[2]) + "," +
                                             std::to_string(GameConfig::GameConfig::payoffs[3]) + "\"";
-                metadata << population << "," << generations << "," << mutation << "," << useSCB
+                const std::string SCBval = ((useSCB) ? std::to_string(1) : std::to_string(0));
+                metadata << population << "," << generations << "," << mutation << "," << SCBval << ","
                         << GameConfig::GameConfig::rounds << "," << GameConfig::GameConfig::repeats << ","
                         << GameConfig::GameConfig::seed << "," << GameConfig::GameConfig::epsilon << "," << payoffs;
             }

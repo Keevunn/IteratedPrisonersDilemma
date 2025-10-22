@@ -5,7 +5,7 @@
 namespace StrategyAgents {
 
     ResponseType GRIM::decide(const ResponseType& lastResponse) {
-        if (lastResponse == ResponseType::INVALID) return initialResponse;
+        if (lastResponse == ResponseType::INVALID) return noisyResponse(initialResponse);
         if (lastResponse == ResponseType::D)
             playerHasDefected = true;
         return noisyResponse(playerHasDefected ? ResponseType::D : ResponseType::C);

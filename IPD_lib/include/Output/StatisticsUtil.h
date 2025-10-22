@@ -4,6 +4,7 @@
 #include "../../include/EvolutionaryTournament.h"
 
 #include <iosfwd>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -25,6 +26,6 @@ namespace Statistics {
     [[nodiscard]] static std::vector<OverallStats> generateStats(const std::unordered_map<StrategyTypes, std::vector<double>>& data) ;
     [[nodiscard]] std::vector<OverallStats> generateLeaderboard(const std::unique_ptr<Tournament::Tournament>& tournament);
     [[nodiscard]] std::vector<OverallStats> generateLeaderboard(std::vector<OverallStats> data);
-    [[nodiscard]] std::unordered_map<StrategyTypes, std::vector<double>> generatePayoffMatrix(const std::unique_ptr<Tournament::Tournament>& tournament);
+    [[nodiscard]] std::map<StrategyTypes, std::vector<double>> generatePayoffMatrix(const std::unique_ptr<Tournament::Tournament>& tournament);
 
 }

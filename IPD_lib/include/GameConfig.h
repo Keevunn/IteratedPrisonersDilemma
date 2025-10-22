@@ -7,7 +7,7 @@ namespace GameConfig {
     namespace Strategies {
 
         enum class StrategyTypes{
-            ALLC,ALLD,TFT,GRIM,PAVLOV,RND03,CONTRITE,PROBER
+            ALLC,ALLD,TFT,GRIM,PAVLOV,RND03,CONTRITE,PROBER,CAUTIOUS,FBF
         };
 
         enum class StrategyComplexity {
@@ -35,6 +35,10 @@ namespace GameConfig {
                     return "RND0.3";
                 case Strategies::StrategyTypes::TFT:
                     return "TFT";
+                case Strategies::StrategyTypes::CAUTIOUS:
+                    return "CAUTIOUS";
+                case Strategies::StrategyTypes::FBF:
+                    return "FBF";
             }
             throw std::invalid_argument("Invalid Strategy Type");
         }
