@@ -10,7 +10,7 @@ namespace Statistics {
 
      std::ostream& operator<<(std::ostream& os, const OverallStatsStruct& stats) {
         os << std::left << std::setprecision(4)
-            << std::setw(15) << stats.name
+            << std::setw(15) << stats.name + ": "
             << stats.mean << ", 95% CI [" << stats.CI.first << ", " << stats.CI.second << "]";
         return os;
     }
@@ -46,6 +46,12 @@ namespace Statistics {
         return leaderboard;
     }
 
+    std::vector<OverallStats> generateLeaderboard(std::vector<OverallStats> data) {
+         std::ranges::sort(data,
+                          [](const auto& a, const auto& b) { return a.mean > b.mean; });
+         return data;
+    }
+
     std::unordered_map<StrategyTypes, std::vector<double>> generatePayoffMatrix(const std::unique_ptr<Tournament::Tournament>& tournament) {
         std::unordered_map<StrategyTypes, std::vector<double>> payoffMatrix;
         const auto& matches = tournament->getMatchResults();
@@ -75,10 +81,4 @@ namespace Statistics {
         return payoffMatrix;
     }
 
-    std::vector<OverallStats> generateFitnessStats(const std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>& tournament) {
-        auto fitnessStats = generateStats(tournament->getAvgFitnessHistory());
-        std::ranges::sort(fitnessStats,
-                      [](const auto& a, const auto& b) { return a.mean > b.mean; });
-        return fitnessStats;
-    }
 }

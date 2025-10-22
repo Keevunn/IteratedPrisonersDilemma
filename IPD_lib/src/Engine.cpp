@@ -13,61 +13,68 @@ namespace Engine {
     void Engine::runIPD() {
         tournament->simulateTournament();
 
-
         const std::filesystem::path resultsFilePath = generateFileName();
         std::ofstream resultsFile(resultsFilePath);
         outputResults(resultsFile);
         std::cout << "Results saved in: " << resultsFilePath << std::endl;
     }
 
+    // To enable SCB use: --scb 1 or --scb
     void Engine::parseArgs(const std::vector<std::string_view>& args) {
         bool shouldSave = false;
         bool shouldLoad = false;
         std::string_view fileName;
 
         for (int i = 0; i < args.size(); i++) { // flags in every even position: 0, 2, 4 etc...
-            ArgTypes arg = ConfigParser::validateArg(args[i]);
+            ConfigParser::ArgTypes arg = ConfigParser::validateArg(args[i]);
 
             switch (arg) { // Increments the pointer
-                case ArgTypes::ROUNDS:
+                case ConfigParser::ArgTypes::ROUNDS:
                     GameConfig::GameConfig::rounds = ConfigParser::parseParam<int>(args[++i], "--rounds", 0); break;
-                case ArgTypes::REPEATS:
+                case ConfigParser::ArgTypes::REPEATS:
                     GameConfig::GameConfig::repeats = ConfigParser::parseParam<int>(args[++i], "--repeats", 0); break;
-                case ArgTypes::SEED:
+                case ConfigParser::ArgTypes::SEED:
                     GameConfig::GameConfig::seed = ConfigParser::parseParam<int>(args[++i], "--seed"); break;
-                case ArgTypes::EPSILON:
+                case ConfigParser::ArgTypes::EPSILON:
                     GameConfig::GameConfig::epsilon = ConfigParser::parseParam<double>(args[++i], "--epsilon", {0,1}); break;
-                case ArgTypes::PAYOFFS:
+                case ConfigParser::ArgTypes::PAYOFFS:
                     GameConfig::GameConfig::payoffs = ConfigParser::validatePayoffs(args[++i]); break;
-                case ArgTypes::STRATEGIES:
+                case ConfigParser::ArgTypes::STRATEGIES:
                     strategies = ConfigParser::parseStrategies(args[++i]);
                     break;
-                case ArgTypes::FORMAT:
+                case ConfigParser::ArgTypes::FORMAT:
                     ConfigParser::validateFormat(args[++i]);
                     format = args[i]; break;
-                case ArgTypes::SAVE:
+                case ConfigParser::ArgTypes::SAVE:
                     if (shouldLoad) throw std::invalid_argument("Cannot use --save and --load at the same time");
                     shouldSave = true;
                     ConfigParser::validateFileName(args[i+1]);
                     fileName = args[++i]; break;
-                case ArgTypes::LOAD:
+                case ConfigParser::ArgTypes::LOAD:
                     if (shouldSave) throw std::invalid_argument("Cannot use --save and --load at the same time");
                     shouldLoad = true;
                     ConfigParser::validateFileName(args[i+1], true);
                     fileName = args[++i];
                     break;
-                case ArgTypes::EVOLVE:
+                case ConfigParser::ArgTypes::EVOLVE:
                     shouldEvolve = true;
-                    if (i + 1 >= args.size()) break;
+                    if (i + 1 >= args.size()) break; // end of arguments
                     if (args[i+1] == "1") i += 1;
-                    else if (args[i+1][0] != '-')
+                    else if (args[i+1][0] != '-') // allows --evolve without the '1' parameter
                         throw std::invalid_argument("Invalid parameter for --evolve argument: " + std::string(args[i+1]) + "\nUse --evolve 1 or --evolve to enable evolution");
                     break;
-                case ArgTypes::POPULATION:
+                case ConfigParser::ArgTypes::SCB:
+                    enableSCB = true;
+                    if (i + 1 >= args.size()) break; // end of arguments
+                    if (args[i+1] == "1") i += 1;
+                    else if (args[i+1][0] != '-') // allows --scb without the '1' parameter
+                        throw std::invalid_argument("Invalid parameter for --scb argument: " + std::string(args[i+1]) + "\nUse --scb 1 or --scb to enable evolution");
+                    break;
+                case ConfigParser::ArgTypes::POPULATION:
                     population = ConfigParser::parseParam<int>(args[++i], "--population"); break;
-                case ArgTypes::GENERATIONS:
+                case ConfigParser::ArgTypes::GENERATIONS:
                     generations = ConfigParser::parseParam<int>(args[++i], "--generations"); break;
-                case ArgTypes::MUTATION:
+                case ConfigParser::ArgTypes::MUTATION:
                     mutation = ConfigParser::parseParam<double>(args[++i], "--mutation"); break;
 
             } // shouldLoad should call parseArgs , shouldSave should write it all to filename
@@ -76,7 +83,11 @@ namespace Engine {
         if (shouldLoad) loadConfig(fileName);
         if (shouldEvolve && strategies.size() < 4)
             throw std::invalid_argument("Not enough strategies provided for evolution: Requires at least 4 distinct strategies. \nValid strategies: ALLC,ALLD,TFT,GRIM,PAVLOV,RND0.3,CONTRITE,PROBER");
-
+        // if enableSCB assume shouldEvolve should also be true
+        if (enableSCB && !shouldEvolve) {
+            shouldEvolve = true;
+            std::cout << "Using --scb, but missing --evolve argument. Simulation will now run with --evolve" << std::endl;
+        }
     }
 
     // files used for saveConfig and loadConfig shouldn't include --save and --load arguments to avoid circular calls
@@ -160,18 +171,18 @@ namespace Engine {
     std::ofstream& Engine::outputResults(std::ofstream& file) {
         if (shouldEvolve) {
             auto evoTournament = std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>(
-                                    static_cast<Tournament::Evolution::EvolutionaryTournament*>( tournament.release()) );
+                                    dynamic_cast<Tournament::Evolution::EvolutionaryTournament*>( tournament.release()) );
 
             if (format == "text") {
-                auto out = Results::Text::Evolution::Output(std::move(evoTournament), population, generations, mutation);
+                auto out = Results::Text::Evolution::Output(std::move(evoTournament), population, generations, mutation, enableSCB);
                 file << out;
             }
             if (format == "csv") {
-                auto out = Results::CSV::Evolution::Output(std::move(evoTournament), population, generations, mutation);
+                auto out = Results::CSV::Evolution::Output(std::move(evoTournament), population, generations, mutation, enableSCB);
                 file << out;
             }
             if (format == "json") {
-                auto out = Results::JSON::Evolution::Output(std::move(evoTournament), population, generations, mutation);
+                auto out = Results::JSON::Evolution::Output(std::move(evoTournament), population, generations, mutation, enableSCB);
                 file << out;
             }
         }

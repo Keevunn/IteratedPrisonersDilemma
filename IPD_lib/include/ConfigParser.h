@@ -7,10 +7,15 @@
 
 #include "GameConfig.h"
 
-using namespace GameConfig::Args;
 using namespace GameConfig::Strategies;
 
 namespace Engine::ConfigParser {
+
+    enum class ArgTypes{
+        ROUNDS, REPEATS, SEED, EPSILON, PAYOFFS,
+        STRATEGIES, FORMAT, SAVE, LOAD,
+        EVOLVE, POPULATION, GENERATIONS, MUTATION, SCB
+    };
 
     ArgTypes validateArg(std::string_view arg);
     void validateFormat(std::string_view format);

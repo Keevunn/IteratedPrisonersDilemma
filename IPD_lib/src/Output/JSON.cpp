@@ -96,6 +96,7 @@ namespace Results::JSON {
             output["metadata"]["seed"] = GameConfig::GameConfig::seed;
             output["metadata"]["epsilon"] = GameConfig::GameConfig::epsilon;
             output["metadata"]["payoffs"] = json::array({GameConfig::GameConfig::payoffs[0], GameConfig::GameConfig::payoffs[1], GameConfig::GameConfig::payoffs[2], GameConfig::GameConfig::payoffs[3]});
+            output["metadata"]["scb"] = useSCB;
 
             // Results - Array of json objects, each for a single observation
             output["results"] = json::array();

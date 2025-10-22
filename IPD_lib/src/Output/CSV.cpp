@@ -24,13 +24,13 @@ namespace Results::CSV {
                                             std::to_string(GameConfig::GameConfig::payoffs[1]) + "," +
                                             std::to_string(GameConfig::GameConfig::payoffs[2]) + "," +
                                             std::to_string(GameConfig::GameConfig::payoffs[3]) + "\"";
-                metadata << population << "," << generations << "," << mutation << "," << GameConfig::GameConfig::rounds << ","
-                        << GameConfig::GameConfig::repeats << "," << GameConfig::GameConfig::seed << ","
-                        << GameConfig::GameConfig::epsilon << "," << payoffs;
+                metadata << population << "," << generations << "," << mutation << "," << useSCB
+                        << GameConfig::GameConfig::rounds << "," << GameConfig::GameConfig::repeats << ","
+                        << GameConfig::GameConfig::seed << "," << GameConfig::GameConfig::epsilon << "," << payoffs;
             }
 
             // Header
-            os << "Generation,Strategy,Share,Mean,CI_lower,CI_upper,Population,Total_Generations,Mutation,Rounds,Repeats,Seed,Epsilon,payoffs" << std::endl;
+            os << "Generation,Strategy,Share,Mean,CI_lower,CI_upper,Population,Total_Generations,Mutation,SCB,Rounds,Repeats,Seed,Epsilon,payoffs" << std::endl;
 
             // Body
             for (int i{}; i < generations ; ++i) {

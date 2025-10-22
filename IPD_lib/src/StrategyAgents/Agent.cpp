@@ -10,6 +10,9 @@ namespace StrategyAgents {
     }
 
     double Agent::getScore() const{ return score; }
+
+    int Agent::getComplexityCost() const { return static_cast<int>(complexityCost); }
+
     void Agent::setScore(const double value) { score = value; }
     void Agent::addToScore(const double value) { score += value; }
 

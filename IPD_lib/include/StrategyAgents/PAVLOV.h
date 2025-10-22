@@ -6,7 +6,7 @@ namespace StrategyAgents {
     // Initial response: C
     class PAVLOV : public Agent {
     public:
-        PAVLOV() : Agent(StrategyTypes::PAVLOV) {}
+        PAVLOV() : Agent(StrategyTypes::PAVLOV) { complexityCost = StrategyComplexity::MEDIUM; }
 
         void addToScore(double value) override;
         ResponseType decide(const ResponseType& lastResponse) override;

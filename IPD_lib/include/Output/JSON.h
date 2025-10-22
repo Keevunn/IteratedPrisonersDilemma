@@ -1,6 +1,6 @@
 #pragma once
 #include "Results.h"
-#include "../../include/Output/StatisticsUtil.h"
+#include "StatisticsUtil.h"
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -24,8 +24,8 @@ namespace Results::JSON {
     namespace Evolution {
         class Output : public Results::Evolution::Output {
         public:
-             Output(std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>&& tournament, const int population, const int generations, const double mutation) :
-                Results::Evolution::Output(std::move(tournament), population, generations, mutation) {}
+             Output(std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>&& tournament, const int population, const int generations, const double mutation, const bool useSCB) :
+                Results::Evolution::Output(std::move(tournament), population, generations, mutation, useSCB) {}
 
             std::ostream& logResults(std::ostream& os) override;
 

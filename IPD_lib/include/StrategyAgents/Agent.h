@@ -11,8 +11,7 @@ namespace StrategyAgents {
 
     class Agent {
     public:
-        explicit Agent(const ResponseType init) : initialResponse(init) {} // TODO Can remove?
-        explicit Agent(const ResponseType init, const StrategyTypes strat) : initialResponse(init), strategy(strat) {
+        Agent(const ResponseType init, const StrategyTypes strat) : initialResponse(init), strategy(strat) {
             name = strategyToString(strat);
         }
         explicit Agent(const StrategyTypes strat) : strategy(strat) {
@@ -27,6 +26,7 @@ namespace StrategyAgents {
         virtual void resetAgent();
 
         [[nodiscard]] double getScore() const;
+        [[nodiscard]] int getComplexityCost() const;
         void setScore(double value);
         virtual void addToScore(double value);
 
@@ -40,6 +40,8 @@ namespace StrategyAgents {
         const ResponseType initialResponse = ResponseType::C;
         std::string name{};
         StrategyTypes strategy;
+
+        StrategyComplexity complexityCost = StrategyComplexity::INVALID;
 
     private:
         double score{}; // Score per match

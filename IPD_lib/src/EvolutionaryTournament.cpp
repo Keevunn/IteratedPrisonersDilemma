@@ -12,7 +12,6 @@ namespace Tournament::Evolution {
     void EvolutionaryTournament::simulateTournament() {
         for (int i{}; i < generations; ++i) {
             runTournamentMatches();
-            calculateExpectedFitness();
             updateProportions();
             mutatePopulation();
             updateHistory();
@@ -68,12 +67,15 @@ namespace Tournament::Evolution {
     }
 
     void EvolutionaryTournament::runTournamentMatches() {
+        std::unordered_map<StrategyTypes, std::vector<double>> allFitnessHistory;
         for (auto& match : matchResults) {
             std::vector<double> p1MeanPayoff{};
             std::vector<double> p2MeanPayoff{};
             p1MeanPayoff.reserve(GameConfig::GameConfig::repeats);
             p2MeanPayoff.reserve(GameConfig::GameConfig::repeats);
-            std::string key = match.player1->getName() + "," + match.player2->getName();
+
+            StrategyTypes p1Strat = match.player1->getStrategy();
+            StrategyTypes p2Strat = match.player2->getStrategy();
 
             for (int i{};  i < GameConfig::GameConfig::repeats; i++) { // Play each match "repeats" times
                 Match::simulateMatch(match.player1, match.player2);
@@ -85,9 +87,22 @@ namespace Tournament::Evolution {
                 match.player1->resetAgent();
                 match.player2->resetAgent();
             }
-            match.p1Mean = MathUtil::calculateMean(p1MeanPayoff, GameConfig::GameConfig::repeats);
-            match.p2Mean = MathUtil::calculateMean(p2MeanPayoff, GameConfig::GameConfig::repeats);
+            // Calculates expected fitness after each match
+            double p1Mean = MathUtil::calculateMean(p1MeanPayoff, GameConfig::GameConfig::repeats);
+            double p2Mean = MathUtil::calculateMean(p2MeanPayoff, GameConfig::GameConfig::repeats);
+            if (useSCB) {
+                p1Mean -= match.player1->getComplexityCost();
+                p2Mean -= match.player2->getComplexityCost();
+            }
+            const double p1WeightedFitness = p1Mean * currentStrategyProportion[p2Strat];
+            currentStrategyFitness[match.player1->getStrategy()] += p1WeightedFitness;
+            allFitnessHistory[p1Strat].emplace_back(p1WeightedFitness);
+
+            const double p2WeightedFitness = p2Mean * currentStrategyProportion[p1Strat];
+            currentStrategyFitness[p2Strat] += p2WeightedFitness;
+            allFitnessHistory[p2Strat].emplace_back(p2WeightedFitness);
         }
+        updateFitnessHistory(allFitnessHistory);
     }
 
     void EvolutionaryTournament::initialise() {
@@ -103,24 +118,6 @@ namespace Tournament::Evolution {
         currentGeneration.resize(strategies.size());
     }
 
-    // Returns expected fitness for the entire population
-    void EvolutionaryTournament::calculateExpectedFitness() {
-        std::unordered_map<StrategyTypes, std::vector<double>> allFitnessHistory;
-        for (const auto& match : matchResults) {
-            StrategyTypes p1Strat = match.player1->getStrategy();
-            StrategyTypes p2Strat = match.player2->getStrategy();
-
-            const double p1WeightedFitness = match.p1Mean * currentStrategyProportion[p2Strat];
-            currentStrategyFitness[p1Strat] += p1WeightedFitness;
-            allFitnessHistory[p1Strat].emplace_back(p1WeightedFitness);
-
-            const double p2WeightedFitness = match.p1Mean * currentStrategyProportion[p1Strat];
-            currentStrategyFitness[p2Strat] += p2WeightedFitness;
-            allFitnessHistory[p2Strat].emplace_back(p2WeightedFitness);
-        }
-        updateFitnessHistory(allFitnessHistory);
-    }
-
     double EvolutionaryTournament::calculateAverageFitness()  {
         double avg = 0;
         for (const StrategyTypes& strat : strategies) {
@@ -130,9 +127,33 @@ namespace Tournament::Evolution {
     }
 
     void EvolutionaryTournament::updateProportions() {
-        double avgFitness = calculateAverageFitness();
+        const double avgFitness = calculateAverageFitness();
+        // Shift all fitness values to be positive
+        const double minFitness = std::ranges::min_element(currentStrategyFitness
+                                                     ,[](const auto& a, const auto& b) { return a.second < b.second; })->second;
+
+        const double shift = (minFitness < 0) ? -minFitness + 1.0 : 0.0;
+
+        // Apply shifted replicator equation
+        double total = 0.0;
         for (auto& [strat, proportion] : currentStrategyProportion) {
-            proportion = proportion * (currentStrategyFitness.at(strat) / avgFitness);
+            double shiftedFitness = currentStrategyFitness[strat] + shift;
+            double shiftedAvg = avgFitness + shift;
+            proportion = proportion * (shiftedFitness / shiftedAvg);
+            total += proportion;
+        }
+
+        // Renormalize to ensure sum = 1.0
+        if (total > 0.0) {
+            for (auto &proportion: currentStrategyProportion | std::views::values) {
+                proportion /= total;
+            }
+        }
+
+        // Clamp proportions
+        for (auto &proportion: currentStrategyProportion | std::views::values) {
+            if (proportion < 1e-10) proportion = 0.0;  // Extinction threshold
+            if (proportion > 1.0) proportion = 1.0;
         }
     }
 

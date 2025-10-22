@@ -7,10 +7,8 @@
 #include "EvolutionaryTournament.h"
 #include "GameConfig.h"
 #include "Tournament.h"
-#include "Output/Results.h"
 
 using namespace GameConfig::Strategies;
-using namespace GameConfig::Args;
 
 namespace Engine {
 
@@ -33,7 +31,7 @@ namespace Engine {
             const std::vector<std::string_view> args(argv + 1, argv + argc);
             parseArgs(args);
             if (shouldEvolve)
-                tournament = std::make_unique<Tournament::Evolution::EvolutionaryTournament>(strategies, population, generations, mutation);
+                tournament = std::make_unique<Tournament::Evolution::EvolutionaryTournament>(strategies, population, generations, mutation, enableSCB);
             else
                 tournament = std::make_unique<Tournament::Tournament>(strategies);
         };
@@ -60,6 +58,7 @@ namespace Engine {
 
         // Flags
         bool shouldEvolve = false;
+        bool enableSCB = false;
 
         // Evolution params (only if shouldEvolve)
         int population = 100;

@@ -12,19 +12,6 @@ namespace Results {
     inline static int defaultPrecision = 4;
     inline static std::string divider = "------------------------------------------------------------";
 
-    namespace Statistics {
-        typedef struct OverallStatsStruct {
-            OverallStatsStruct() = default;
-
-            std::string name{};
-            double mean{};
-            double stdDev{};
-            std::pair<double, double> CI{};
-
-            friend std::ostream& operator<<(std::ostream& os, const OverallStatsStruct& stats);
-        } OverallStats;
-    }
-
     class Output {
     public:
         virtual ~Output() = default;
@@ -37,6 +24,7 @@ namespace Results {
     protected:
         std::unique_ptr<Tournament::Tournament> tournament;
 
+        bool useSCB;
     };
 
     namespace Evolution {
@@ -44,8 +32,8 @@ namespace Results {
         class Output {
         public:
             virtual ~Output() = default;
-            Output(std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>&& tournament, const int population, const int generations, const double mutation) :
-               tournament(std::move(tournament)), population(population), generations(generations), mutation(mutation) {}
+            Output(std::unique_ptr<Tournament::Evolution::EvolutionaryTournament>&& tournament, const int population, const int generations, const double mutation, const bool useSCB) :
+               tournament(std::move(tournament)), population(population), generations(generations), mutation(mutation), useSCB(useSCB) {}
 
             virtual std::ostream& logResults(std::ostream& os) {return os;}
 
@@ -54,6 +42,7 @@ namespace Results {
             std::unique_ptr<Tournament::Evolution::EvolutionaryTournament> tournament;
             const int population; const int generations; const double mutation;
 
+            bool useSCB;
         };
     }
 }

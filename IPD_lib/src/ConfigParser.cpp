@@ -24,7 +24,8 @@ namespace Engine::ConfigParser {
             {"--evolve", ArgTypes::EVOLVE},
             {"--population", ArgTypes::POPULATION},
             {"--generations", ArgTypes::GENERATIONS},
-            {"--mutation", ArgTypes::MUTATION}
+            {"--mutation", ArgTypes::MUTATION},
+            {"--scb", ArgTypes::SCB}
         };
 
     }

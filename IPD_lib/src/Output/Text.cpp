@@ -1,9 +1,13 @@
 #include "../../include/Output/Text.h"
+
+#include <algorithm>
+
 #include "../../include/Output/StatisticsUtil.h"
 
 #include <iomanip>
 #include <ranges>
 #include <sstream>
+#include <utility>
 
 using namespace Statistics;
 
@@ -62,7 +66,6 @@ namespace Results::Text {
 
     }
 
-
     namespace Evolution {
 
         std::ostream& operator<<(std::ostream& os, const std::vector<double>& row) {
@@ -95,12 +98,14 @@ namespace Results::Text {
                     if (!isHeaderComplete) {
                         header << std::setw(defaultWidth) << pos;
                     }
-                    std::string value = (data[pos] < DISPLAY_THRESHOLD) ? std::string{"~0"} : std::to_string(data[pos]);
+                    std::string value = (historicalDataStruct.shouldClamp && data[pos] < DISPLAY_THRESHOLD)
+                                            ? std::string{"~0"} : std::to_string(data[pos]);
                     body << std::setw(defaultWidth) << value;
                     hasPrintedFinalCol = (pos == generations - 1);
                 }
                 if (!hasPrintedFinalCol) {
-                    std::string value = (data[generations - 1] < DISPLAY_THRESHOLD) ? std::string{"~0"} : std::to_string(data[generations - 1]);
+                    std::string value = (historicalDataStruct.shouldClamp && data[generations - 1] < DISPLAY_THRESHOLD)
+                                            ? std::string{"~0"} : std::to_string(data[generations - 1]);
                     body << value;
                 }
 
@@ -133,6 +138,7 @@ namespace Results::Text {
             <<"    Generations: " << generations
             << "    Mutations: " << mutation
             << std::endl;
+            if (useSCB) os << "SCB: true" << std::endl;
 
             outputProportionData(os);
             outputFitnessData(os);
@@ -148,17 +154,29 @@ namespace Results::Text {
             const auto& finalGenerationData = tournament->getGenerationData(generations-1);
             constexpr double DISPLAY_THRESHOLD = 1e-6; // Only show if proportion > 0.0001%
 
+            struct proportionStats {
+                proportionStats(const std::string_view name, const double proportion) : name(name), proportion(proportion) {};
+                std::string name{};
+                double proportion{};
+            };
+
+            std::vector<proportionStats> allProportions;
             for (const auto& strategyValues : finalGenerationData) {
+                allProportions.emplace_back(strategyToString(strategyValues.strategy), strategyValues.proportion);
+            }
+            std::ranges::sort(allProportions,
+                          [](const auto& a, const auto& b) { return a.proportion > b.proportion; });
+            for ( const auto& stats : allProportions ) {
                 // Final population shares
                 // e.g. ALLC: 100 (10%)
-                double absolutePopulation = population * strategyValues.proportion;
-                double percentage = strategyValues.proportion * 100.0;
+                const double absolutePopulation = population * stats.proportion;
+                const double percentage = stats.proportion * 100.0;
 
-                if (strategyValues.proportion < DISPLAY_THRESHOLD) {
-                    os  << std::setw(defaultWidth) << strategyToString(strategyValues.strategy) + ": "
+                if (stats.proportion < DISPLAY_THRESHOLD) {
+                    os  << std::setw(defaultWidth) << stats.name + ": "
                         << "~0 (~0%)" << std::endl;
                 } else {
-                    os  << std::setw(defaultWidth) << strategyToString(strategyValues.strategy) + ": "
+                    os  << std::setw(defaultWidth) << stats.name + ": "
                         << absolutePopulation << " (" << percentage << "%)" << std::endl;
                 }
             }
@@ -167,19 +185,30 @@ namespace Results::Text {
             constexpr int maxColumns = 10;
             const int increment = generations <= maxColumns ? 1 : generations / (maxColumns - 2); // Always includes gen 0 and last gen
             os << std::left << std::endl << " Population shares after each generation " << std::endl << divider << std::endl;
-            os << historicalDataOutConfig(proportionHistory, generations, increment);
+            os << historicalDataOutConfig(proportionHistory, generations, increment, true);
 
             return os;
         }
 
         std::ostream& Output::outputFitnessData(std::ostream& os) const {
+            // Final Average fitness
+            // e.g. 1. ALLC: (mean), 95% CI [CI]
             os  << std::endl << " Final Average Fitness " << std::endl
                 << divider << std::endl;
 
             const auto& fitnessHistory = tournament->getAvgFitnessHistory();
-            // Final Average fitness
-            // e.g. ALLC: (mean), 95% CI [CI]
-            os << generateFitnessStats(tournament) << std::endl; // explicit call to avoid redefining
+
+            const auto& finalGenerationData = tournament->getGenerationData(generations-1);
+            std::vector<OverallStats> allStats = {};
+            for (int i{}; i < finalGenerationData.size(); i++) {
+                const auto& strategyValues = finalGenerationData[i];
+                OverallStats stats;
+                stats.name = strategyToString(strategyValues.strategy);
+                stats.mean = strategyValues.avgFitness;
+                stats.CI = strategyValues.CI;
+                allStats.push_back(stats);
+            }
+            os << generateLeaderboard(allStats);
 
             constexpr int maxColumns = 10;
             const int increment = generations <= maxColumns ? 1 : generations / (maxColumns - 2);

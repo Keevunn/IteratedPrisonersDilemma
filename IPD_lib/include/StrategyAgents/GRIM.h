@@ -6,7 +6,7 @@ namespace StrategyAgents {
     // Initial response: C
     class GRIM : public Agent {
     public:
-        GRIM() : Agent(StrategyTypes::GRIM) {}
+        GRIM() : Agent(StrategyTypes::GRIM) { complexityCost = StrategyComplexity::MEDIUM; }
 
         ResponseType decide(const ResponseType& lastResponse) override;
 

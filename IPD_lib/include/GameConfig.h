@@ -4,20 +4,17 @@
 
 namespace GameConfig {
 
-    namespace Args{
-
-         enum class ArgTypes{
-            ROUNDS, REPEATS, SEED, EPSILON, PAYOFFS,
-            STRATEGIES, FORMAT, SAVE, LOAD,
-            EVOLVE, POPULATION, GENERATIONS, MUTATION
-        };
-
-    }
-
     namespace Strategies {
 
         enum class StrategyTypes{
             ALLC,ALLD,TFT,GRIM,PAVLOV,RND03,CONTRITE,PROBER
+        };
+
+        enum class StrategyComplexity {
+            INVALID = 0,
+            SIMPLE = 1,      // ALLC, ALLD, RND
+            MEDIUM = 2,      // TFT, GRIM, PAVLOV
+            COMPLEX = 3      // CTFT, PROBER
         };
 
         inline static std::string strategyToString(const Strategies::StrategyTypes& strategy) {

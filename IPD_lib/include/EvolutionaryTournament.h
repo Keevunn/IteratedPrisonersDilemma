@@ -12,8 +12,8 @@ namespace Tournament::Evolution {
 
     class EvolutionaryTournament : public Tournament {
     public:
-        EvolutionaryTournament(const std::vector<StrategyTypes>& strategies, const int population, const int generations, const double mutations) : Tournament(
-            strategies), population(population), generations(generations), mutation(mutations) {
+        EvolutionaryTournament(const std::vector<StrategyTypes>& strategies, const int population, const int generations, const double mutations, const bool useSCB) : Tournament(
+            strategies), population(population), generations(generations), mutation(mutations), useSCB(useSCB) {
             initialise();
         };
 
@@ -30,7 +30,6 @@ namespace Tournament::Evolution {
     private:
         void runTournamentMatches();
         void initialise(); // Initialises strategyProportion, strategyFitness, proportionHistory
-        void calculateExpectedFitness();
         [[nodiscard]] double calculateAverageFitness();
         void updateProportions();
         void resetCurrentGeneration();
@@ -48,5 +47,7 @@ namespace Tournament::Evolution {
 
         std::vector<std::vector<GenerationData>> history; // [generation][strategy_index]
         std::unordered_map<StrategyTypes, size_t> strategyIndex; // For quick strategy lookup
+
+        bool useSCB;
     };
 }
