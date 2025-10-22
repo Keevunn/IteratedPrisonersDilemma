@@ -17,6 +17,7 @@ namespace Engine {
         std::ofstream resultsFile(resultsFilePath);
         outputResults(resultsFile);
         std::cout << "Results saved in: " << resultsFilePath << std::endl;
+        resultsFile.close();
     }
 
     // To enable SCB use: --scb 1 or --scb
@@ -82,7 +83,9 @@ namespace Engine {
         if (shouldSave) saveConfig(fileName, args);
         if (shouldLoad) loadConfig(fileName);
         if (shouldEvolve && strategies.size() < 4)
-            throw std::invalid_argument("Not enough strategies provided for evolution: Requires at least 4 distinct strategies. \nValid strategies: ALLC,ALLD,TFT,GRIM,PAVLOV,RND0.3,CONTRITE,PROBER");
+            throw std::invalid_argument("Not enough strategies provided for evolution: Requires at least 4 distinct strategies. \nValid strategies: ALLC,ALLD,TFT,GRIM,PAVLOV,RND0.3,CONTRITE,PROBER,FBF,CAUTIOUS");
+        if (strategies.empty())
+            throw std::invalid_argument("No strategies provided. \nValid strategies: ALLC,ALLD,TFT,GRIM,PAVLOV,RND0.3,CONTRITE,PROBER,FBF,CAUTIOUS");
         // if enableSCB assume shouldEvolve should also be true
         if (enableSCB && !shouldEvolve) {
             shouldEvolve = true;
@@ -101,10 +104,14 @@ namespace Engine {
                 config += std::string(args[i]) + " "; // All arguments on a single line
         }
 
-        std::ofstream file (fileName.data());
+        const std::filesystem::path configPath{ROOT/"configurations"}; // to the root of the project - when run with cMake defaults to cmake-build-debug
+        std::filesystem::create_directory(configPath);
+
+        std::ofstream file (configPath/fileName.data());
         if (!file.is_open())
             throw std::invalid_argument("Could not open file: " + std::string(fileName));
         file << config;
+        std::cout << "Saving config to " << fileName << std::endl;
         file.close();
     }
 
@@ -112,7 +119,7 @@ namespace Engine {
         std::string configStr;
         std::vector<std::string_view> config;
         config.reserve(11); // At most 11 arguments
-        std::ifstream file (fileName.data());
+        std::ifstream file (ROOT/fileName.data());
 
         if (!file.is_open())
             throw std::invalid_argument("Could not open file: " + std::string(fileName));
@@ -123,10 +130,9 @@ namespace Engine {
             if (pos != std::string::npos)
                 line->replace(pos, 1, ""); // Remove \n
             configStr.append(*line);
-            configStr.append(" ");
+            if (line->back() != ' ') configStr.append(" ");
         }
         file.close();
-        configStr.pop_back(); // Remove last space
 
         size_t start = 0; size_t end = configStr.find(' ');
         while (end < std::string::npos) {
@@ -134,13 +140,11 @@ namespace Engine {
             start = end + 1;
             end = configStr.find(' ', start);
         }
-        config.emplace_back(std::string_view(configStr).substr(start, end - start)); // Add last element
-
         parseArgs(config);
     }
 
     std::filesystem::path Engine::generateFileName() {
-        const std::filesystem::path results{"..\\..\\results"}; // to the root of the project - when run with cMake defaults to cmake-build-debug
+        const std::filesystem::path results{ROOT/"results"};
         std::filesystem::create_directory(results);
 
         std::string filename = "results_";

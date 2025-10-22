@@ -18,8 +18,7 @@ namespace Statistics {
     std::ostream& operator<<(std::ostream& os, const std::vector<OverallStats>& rankedData){
          int i = 1;
          for (const auto& stats : rankedData) {
-             os << std::left << i++
-             << std::setw(5) << "."
+             os << std::left << std::setw(5) << std::to_string(i++) + "."
              << stats << std::endl;
          }
          return os;

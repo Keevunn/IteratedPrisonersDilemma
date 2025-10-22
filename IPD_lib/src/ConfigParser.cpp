@@ -146,7 +146,7 @@ namespace Engine::ConfigParser {
             throw std::invalid_argument("Invalid file name: " + std::string(fileName) + "\nFile name must contain a text file extension (.txt)");
 
         if (shouldLoad && !std::filesystem::exists(fileName))
-            throw std::invalid_argument("File does not exist: " + std::string(fileName));
+            throw std::invalid_argument("File does not exist: " + std::string(fileName) + "\nInclude sub-directories relative to the root: " + OUTPUT_DIR);
     }
 
 }

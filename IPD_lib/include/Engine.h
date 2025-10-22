@@ -48,6 +48,7 @@ namespace Engine {
 
         void saveConfig(const std::string_view& fileName, const std::vector<std::string_view>& args);
         void loadConfig(const std::string_view& fileName);
+        std::filesystem::path findConfigFile(const std::string_view& fileName);
 
         std::ofstream& outputResults(std::ofstream& file);
         std::filesystem::path generateFileName();
@@ -68,5 +69,6 @@ namespace Engine {
         // Simulation data
         std::unique_ptr<Tournament::Tournament> tournament;
 
+        inline static std::filesystem::path ROOT = OUTPUT_DIR;
     };
 }

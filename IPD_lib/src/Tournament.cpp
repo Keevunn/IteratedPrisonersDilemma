@@ -57,6 +57,10 @@ namespace Tournament {
 
             for (int i{};  i < GameConfig::GameConfig::repeats; i++) { // Play each match "repeats" times
                 Match::simulateMatch(match.player1, match.player2);
+                // For stat calculations of the whole tournament
+                totalScores[match.player1->getStrategy()].emplace_back(match.player1->getScore());
+                totalScores[match.player2->getStrategy()].emplace_back(match.player2->getScore());
+                // For Stat calculations for the match
                 player1Scores.emplace_back(match.player1->getScore());
                 player2Scores.emplace_back(match.player2->getScore());
                 // Reset score for each player so next match starts fresh
@@ -71,10 +75,6 @@ namespace Tournament {
             match.p2Mean = MathUtil::calculateMean(player2Scores, GameConfig::GameConfig::repeats);
             const auto p2StdDev = MathUtil::calculateStdDev(player2Scores, GameConfig::GameConfig::repeats, match.p2Mean);
             match.p2CI = MathUtil::calculateCI( match.p2Mean, p2StdDev, GameConfig::GameConfig::repeats );
-
-            std::ranges::copy(player1Scores, back_inserter(totalScores[match.player1->getStrategy()]) );
-            std::ranges::copy(player2Scores, back_inserter(totalScores[match.player2->getStrategy()]) );
-
         }
 
     }

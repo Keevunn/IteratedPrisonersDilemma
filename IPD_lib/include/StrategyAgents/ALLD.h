@@ -8,7 +8,6 @@ namespace StrategyAgents {
     public:
         ALLD() : Agent(ResponseType::D, StrategyTypes::ALLD) { complexityCost = StrategyComplexity::SIMPLE; }
 
-    protected:
         ResponseType decide(const ResponseType& lastResponse) override;
 
     };

@@ -10,7 +10,8 @@ namespace StrategyAgents {
     ResponseType CAUTIOUS::decide(const ResponseType& lastResponse) {
         if (freezeResponseCount > 0) {
             freezeResponseCount--;
-            response = ResponseType::C;
+            response = (isInitialRound) ? initialResponse : ResponseType::C;
+            if (freezeResponseCount == 0 && isInitialRound) isInitialRound = false;
             return noisyResponse(response);
         }
         // Track punishment cycles (DD)
@@ -37,5 +38,6 @@ namespace StrategyAgents {
         response = initialResponse;
         consecutivePunishments = 0;
         freezeResponseCount = 2;
+        isInitialRound = true;
     }
 }

@@ -5,7 +5,6 @@
 
 namespace Tournament::Match {
 
-    // TODO Figure out the output - should i store the count of Cs and Ds or the number of times it resulted in each payoff
     std::pair<double, double> simulateMatch(const std::unique_ptr<StrategyAgents::Agent>& player1, const std::unique_ptr<StrategyAgents::Agent>& player2) {
 
         std::pair<ResponseType, ResponseType> roundResult = runRound(player1, player2);

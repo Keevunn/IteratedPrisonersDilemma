@@ -52,7 +52,7 @@ namespace Results::Text {
 
         os  << " Leaderboard " << std::endl
             << divider << std::endl
-            << std::left << std::setw(6) << " " << std::setw(defaultWidth) << "Strategy"
+            << std::left << std::setw(5) << " " << std::setw(defaultWidth) << "Strategy"
             << "Mean" << std::endl;
 
         os  << generateLeaderboard(tournament) << std::endl;

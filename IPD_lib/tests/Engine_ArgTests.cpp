@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include "../include/Engine.h"
 
+static std::filesystem::path ROOT = OUTPUT_DIR;
 // Helper to build argc/argv from vector<string>
 static void runArgs(const std::vector<std::string_view>& args) {
     Engine::Engine e(args);
@@ -10,23 +11,23 @@ static void runArgs(const std::vector<std::string_view>& args) {
 // --------------------------- VALID CASES ---------------------------
 
 TEST(EngineArgs, RoundsValid) {
-    EXPECT_NO_THROW(runArgs({"--rounds", "200"}));
+    EXPECT_NO_THROW(runArgs({"--rounds", "200", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, RepeatsValid) {
-    EXPECT_NO_THROW(runArgs({"--repeats", "5"}));
+    EXPECT_NO_THROW(runArgs({"--repeats", "5", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, SeedValid) {
-    EXPECT_NO_THROW(runArgs({"--seed", "123"}));
+    EXPECT_NO_THROW(runArgs({"--seed", "123", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, EpsilonValid) {
-    EXPECT_NO_THROW(runArgs({"--epsilon", "0.1"}));
+    EXPECT_NO_THROW(runArgs({"--epsilon", "0.1", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, PayoffsValid) {
-    EXPECT_NO_THROW(runArgs({"--payoffs", "10,8,3,1"}));
+    EXPECT_NO_THROW(runArgs({"--payoffs", "10,8,3,1", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, StrategiesValid) {
@@ -34,51 +35,43 @@ TEST(EngineArgs, StrategiesValid) {
 }
 
 TEST(EngineArgs, FormatValid) {
-    EXPECT_NO_THROW(runArgs({"--format", "json"}));
-}
-
-TEST(EngineArgs, EvolveFlag) {
-    EXPECT_NO_THROW(runArgs({"--evolve"}));
-}
-
-TEST(EngineArgs, EvolveExplicitOne) {
-    EXPECT_NO_THROW(runArgs({"--evolve", "1"}));
+    EXPECT_NO_THROW(runArgs({"--format", "json", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, PopulationValid) {
-    EXPECT_NO_THROW(runArgs({"--population", "500"}));
+    EXPECT_NO_THROW(runArgs({"--population", "500", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, GenerationsValid) {
-    EXPECT_NO_THROW(runArgs({"--generations", "200"}));
+    EXPECT_NO_THROW(runArgs({"--generations", "200", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, MutationValid) {
-    EXPECT_NO_THROW(runArgs({"--mutation", "0.05"}));
+    EXPECT_NO_THROW(runArgs({"--mutation", "0.05", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, SaveValid) {
-    EXPECT_NO_THROW(runArgs({"--save", "config.txt"}));
+    EXPECT_NO_THROW(runArgs({"--save", "config.txt", "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, LoadValid) {
     // Write a valid config file
-    const char* filename = "valid_config.txt";
-    std::ofstream file(filename);
+    const std::string filename = "valid_config.txt";
+    std::ofstream file(ROOT/filename);
     file << "--rounds 200 --format json";
     file.close();
 
-    EXPECT_NO_THROW(runArgs({"--load", filename}));
+    EXPECT_NO_THROW(runArgs({"--load", (ROOT/filename).string(), "--strategies", "ALLC"}));
 }
 
 TEST(EngineArgs, LoadWithChainedArgs) {
     // Load config + append more args
     const char* filename = "chained_config.txt";
-    std::ofstream file(filename);
-    file << "--rounds 100";
+    std::ofstream file(ROOT/filename);
+    file << "--rounds 100 --strategies ALLC";
     file.close();
 
-    EXPECT_NO_THROW(runArgs({"--load", filename, "--format", "csv"}));
+    EXPECT_NO_THROW(runArgs({"--load", (ROOT/filename).string(), "--format", "csv"}));
 }
 
 // --------------------------- INVALID CASES ---------------------------
@@ -109,6 +102,14 @@ TEST(EngineArgs, FormatInvalid) {
 
 TEST(EngineArgs, EvolveInvalidParam) {
     EXPECT_THROW(runArgs({"--evolve", "banana"}), std::invalid_argument);
+}
+
+TEST(EngineArgs, EvolveFlag) {
+    EXPECT_THROW(runArgs({"--evolve"}), std::invalid_argument);
+}
+
+TEST(EngineArgs, EvolveExplicitOne) {
+    EXPECT_THROW(runArgs({"--evolve", "1"}), std::invalid_argument);
 }
 
 TEST(EngineArgs, SaveInvalidFilename) {

@@ -8,7 +8,6 @@ namespace StrategyAgents {
     public:
         TFT() : Agent(StrategyTypes::TFT) { complexityCost = StrategyComplexity::MEDIUM; }
 
-    protected:
         ResponseType decide(const ResponseType& lastResponse) override;
 
     };

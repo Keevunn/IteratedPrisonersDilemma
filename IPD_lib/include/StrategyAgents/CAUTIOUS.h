@@ -39,6 +39,7 @@ namespace StrategyAgents {
         ResponseType response = initialResponse;
         int consecutivePunishments = 0;
         int freezeResponseCount = MAX_FREEZE;
+        bool isInitialRound = true;
 
         static constexpr int MAX_FREEZE = 2;
     };
