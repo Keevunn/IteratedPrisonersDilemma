@@ -50,36 +50,36 @@ namespace Tournament {
     void Tournament::simulateTournament() {
 
         for (auto& match : matchResults) { // Iterate through each match up
-            std::vector<double> player1Scores{};
-            std::vector<double> player2Scores{};
-            player1Scores.reserve(GameConfig::GameConfig::repeats);
-            player2Scores.reserve(GameConfig::GameConfig::repeats);
+            std::vector<double> player1Payoffs{};
+            std::vector<double> player2Payoffs{};
+            player1Payoffs.reserve(GameConfig::GameConfig::repeats);
+            player2Payoffs.reserve(GameConfig::GameConfig::repeats);
 
             for (int i{};  i < GameConfig::GameConfig::repeats; i++) { // Play each match "repeats" times
                 Match::simulateMatch(match.player1, match.player2);
-                // For stat calculations of the whole tournament
-                totalScores[match.player1->getStrategy()].emplace_back(match.player1->getScore());
-                totalScores[match.player2->getStrategy()].emplace_back(match.player2->getScore());
+                // For stat calculations of the whole tournament - stores average payoffs
+                totalAvgPayoffs[match.player1->getStrategy()].emplace_back(match.player1->getScore()/GameConfig::GameConfig::rounds);
+                totalAvgPayoffs[match.player2->getStrategy()].emplace_back(match.player2->getScore()/GameConfig::GameConfig::rounds);
                 // For Stat calculations for the match
-                player1Scores.emplace_back(match.player1->getScore());
-                player2Scores.emplace_back(match.player2->getScore());
+                player1Payoffs.emplace_back(match.player1->getScore()/GameConfig::GameConfig::rounds);
+                player2Payoffs.emplace_back(match.player2->getScore()/GameConfig::GameConfig::rounds);
                 // Reset score for each player so next match starts fresh
                 match.player1->resetAgent();
                 match.player2->resetAgent();
             }
             // Calculate mean, stDev, CI for each match
-            match.p1Mean = MathUtil::calculateMean(player1Scores, GameConfig::GameConfig::repeats);
-            const auto p1StdDev = MathUtil::calculateStdDev(player1Scores, GameConfig::GameConfig::repeats, match.p1Mean);
+            match.p1Mean = MathUtil::calculateMean(player1Payoffs, GameConfig::GameConfig::repeats);
+            const auto p1StdDev = MathUtil::calculateStdDev(player1Payoffs, GameConfig::GameConfig::repeats, match.p1Mean);
             match.p1CI = MathUtil::calculateCI( match.p1Mean, p1StdDev, GameConfig::GameConfig::repeats );
 
-            match.p2Mean = MathUtil::calculateMean(player2Scores, GameConfig::GameConfig::repeats);
-            const auto p2StdDev = MathUtil::calculateStdDev(player2Scores, GameConfig::GameConfig::repeats, match.p2Mean);
+            match.p2Mean = MathUtil::calculateMean(player2Payoffs, GameConfig::GameConfig::repeats);
+            const auto p2StdDev = MathUtil::calculateStdDev(player2Payoffs, GameConfig::GameConfig::repeats, match.p2Mean);
             match.p2CI = MathUtil::calculateCI( match.p2Mean, p2StdDev, GameConfig::GameConfig::repeats );
         }
 
     }
 
-    std::unordered_map<StrategyTypes, std::vector<double>>& Tournament::getTotalScores() { return totalScores; }
+    std::unordered_map<StrategyTypes, std::vector<double>>& Tournament::getTotalPayoffs() { return totalAvgPayoffs; }
 
     std::vector<MatchResults>& Tournament::getMatchResults() { return matchResults; }
 
@@ -103,7 +103,7 @@ namespace Tournament {
                 std::make_pair(getAgentType(strat), getAgentType(strat))
             );
             // creates an empty vector for every strategy to store scores across every game
-            totalScores.emplace(players[strat].first->getStrategy(), std::vector<double>{});
+            totalAvgPayoffs.emplace(players[strat].first->getStrategy(), std::vector<double>{});
         }
     }
 

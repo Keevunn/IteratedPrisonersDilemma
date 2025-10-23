@@ -28,7 +28,7 @@ namespace Results::CSV {
         }
 
         os << "Strategy,Mean,CI_lower,CI_upper,Rounds,Repeats,Seed,Epsilon,payoffs" << std::endl;
-        auto stats = Statistics::generateStats(tournament->getTotalScores());
+        auto stats = Statistics::generateStats(tournament->getTotalPayoffs());
         for (const auto& strategy : stats) {
             os << strategy.name << "," << strategy.mean << ","  << strategy.CI.first << "," << strategy.CI.second << ","
             << metadata.str() << std::endl;

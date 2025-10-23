@@ -39,7 +39,7 @@ namespace Statistics {
     }
 
     std::vector<OverallStats> generateLeaderboard(const std::unique_ptr<Tournament::Tournament>& tournament) {
-        auto leaderboard = generateStats(tournament->getTotalScores());
+        auto leaderboard = generateStats(tournament->getTotalPayoffs());
         std::ranges::sort(leaderboard,
                           [](const auto& a, const auto& b) { return a.mean > b.mean; });
         return leaderboard;

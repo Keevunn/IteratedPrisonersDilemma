@@ -159,6 +159,8 @@ namespace Engine {
             std::strftime(suffix, 20, "%y-%m-%d_%H%M%S", &newtime);
             filename.append(suffix);
         }
+        // For noise sweep
+        //filename += "eps_" + std::to_string(GameConfig::GameConfig::epsilon);
 
         // Extensions
         if (format == "text")
