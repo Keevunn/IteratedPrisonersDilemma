@@ -24,7 +24,6 @@ namespace Results {
     protected:
         std::unique_ptr<Tournament::Tournament> tournament;
 
-        bool useSCB;
     };
 
     namespace Evolution {

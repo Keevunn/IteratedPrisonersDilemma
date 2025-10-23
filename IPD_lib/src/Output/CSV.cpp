@@ -4,14 +4,38 @@
 #include <sstream>
 
 #include "../../include/MathUtil.h"
+#include "../../include/Output/StatisticsUtil.h"
 
 namespace Results::CSV {
+
+    // Uncomment for payoff matrix output in csv file
+    // std::ostream & Output::logResults(std::ostream &os) {
+    //     os << "Strategy,Opponent,Mean,CI_lower,CI_upper,Rounds,Repeats,Seed,Epsilon,payoffs" << std::endl;
+    //     for (const auto& match : tournament->getMatchResults())
+    //         os << match;
+    //     return os;
+    // }
     std::ostream & Output::logResults(std::ostream &os) {
-        os << "Strategy,Opponent,Mean,CI_lower,CI_upper,Rounds,Repeats,Seed,Epsilon,payoffs" << std::endl;
-        for (const auto& match : tournament->getMatchResults())
-            os << match;
+        // Metadata
+        std::ostringstream metadata;
+        {
+            const std::string payoffs = "\"" + std::to_string(GameConfig::GameConfig::payoffs[0]) + "," +
+                                        std::to_string(GameConfig::GameConfig::payoffs[1]) + "," +
+                                        std::to_string(GameConfig::GameConfig::payoffs[2]) + "," +
+                                        std::to_string(GameConfig::GameConfig::payoffs[3]) + "\"";
+            metadata << GameConfig::GameConfig::rounds << "," << GameConfig::GameConfig::repeats << ","
+                    << GameConfig::GameConfig::seed << "," << GameConfig::GameConfig::epsilon << "," << payoffs;
+        }
+
+        os << "Strategy,Mean,CI_lower,CI_upper,Rounds,Repeats,Seed,Epsilon,payoffs" << std::endl;
+        auto stats = Statistics::generateStats(tournament->getTotalScores());
+        for (const auto& strategy : stats) {
+            os << strategy.name << "," << strategy.mean << ","  << strategy.CI.first << "," << strategy.CI.second << ","
+            << metadata.str() << std::endl;
+        }
         return os;
     }
+
 
     namespace Evolution {
         std::ostream &Output::logResults(std::ostream &os) {
