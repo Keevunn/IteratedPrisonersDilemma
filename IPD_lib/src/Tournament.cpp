@@ -28,7 +28,7 @@ namespace Tournament {
                                          std::to_string(GameConfig::GameConfig::payoffs[2]) + "," +
                                          std::to_string(GameConfig::GameConfig::payoffs[3]) + "\"";
              metadata << GameConfig::GameConfig::rounds << "," << GameConfig::GameConfig::repeats << ","
-                    << GameConfig::GameConfig::seed << "," << GameConfig::GameConfig::epsilon << payoffs;
+                    << GameConfig::GameConfig::seed << "," << GameConfig::GameConfig::epsilon << "," << payoffs;
          }
          os << results.player1->getName() << ","
              << results.player2->getName() << ","
