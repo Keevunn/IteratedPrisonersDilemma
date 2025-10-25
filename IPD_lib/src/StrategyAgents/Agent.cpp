@@ -23,7 +23,7 @@ namespace StrategyAgents {
     ResponseType Agent::noisyResponse(const ResponseType &response) {
         bool shouldSwitch = false;
 
-        if ( Random::Random::getRandomDouble() <= GameConfig::GameConfig::epsilon ) shouldSwitch = true;
+        if ( Random::Random::getRandomDouble() < GameConfig::GameConfig::epsilon ) shouldSwitch = true;
 
         return shouldSwitch ?
             (( response == ResponseType::C ) ?

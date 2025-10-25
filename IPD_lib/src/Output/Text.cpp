@@ -21,20 +21,23 @@ namespace Results::Text {
         return os << std::endl;
     }
 
-    std::ostream& operator<<(std::ostream& os, const std::map<StrategyTypes, std::vector<double>>& payoffMatrix) {
+    std::ostream& operator<<(std::ostream& os,
+        std::pair<std::vector<StrategyTypes>,std::unordered_map<StrategyTypes, std::vector<double>>>& payoffMatrixData) {
+        auto& [outputOrder, payoffMatrix] = payoffMatrixData;
         // player 2 header row
         std:: ostringstream header;
         std:: ostringstream body;
         header << std::left << std::setw(defaultWidth) << " ";
         body << std::left << std::setprecision(defaultPrecision);
-        for (const auto& [strat, dataRow] : payoffMatrix) {
+        for (auto& strat : outputOrder) {
             header  << std::setw(defaultWidth) << strategyToString(strat);
-            body << std::setw(defaultWidth) << strategyToString(strat) << dataRow;
+            body << std::setw(defaultWidth) << strategyToString(strat) << payoffMatrix[strat];
         }
         os << header.str() << std::endl << body.str();
 
-        return os << std::endl;
+        return os;
     }
+
 
     std::ostream& Output::logResults(std::ostream &os) {
         os  << std::left << std::setprecision(defaultPrecision)
@@ -60,7 +63,8 @@ namespace Results::Text {
         os  << " Payoff Matrix " << std::endl
             << divider << std::endl;
 
-        os  << generatePayoffMatrix(tournament);
+        auto outData = generatePayoffMatrix(tournament);
+        os << outData;
 
         return os;
 

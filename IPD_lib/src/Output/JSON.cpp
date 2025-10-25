@@ -50,7 +50,7 @@ namespace Results::JSON {
 
         pushLeaderboard(output, generateLeaderboard(tournament));
 
-        pushPayoffMatrix(output, generatePayoffMatrix(tournament));
+        pushPayoffMatrix(output, generatePayoffMatrix(tournament).second);
 
         return os << std::setw(2) << output;
     }
@@ -66,7 +66,7 @@ namespace Results::JSON {
         }
     }
 
-    void Output::pushPayoffMatrix(json &obj, const std::map<StrategyTypes, std::vector<double>>& payoffMatrix) {
+    void Output::pushPayoffMatrix(json &obj, const std::unordered_map<StrategyTypes, std::vector<double>>& payoffMatrix) {
         std::vector<StrategyTypes> strategies;
         for (const StrategyTypes& strat : payoffMatrix | std::views::keys) {
             strategies.push_back(strat);

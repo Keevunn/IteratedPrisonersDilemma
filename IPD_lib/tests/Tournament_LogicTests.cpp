@@ -65,7 +65,7 @@ TEST_F(TournamentTest, TotalScores_TrackAllRepeats) {
     Tournament::Tournament tournament(strategies);
     tournament.simulateTournament();
     
-    auto& scores = tournament.getTotalScores();
+    auto& scores = tournament.getTotalPayoffs();
     
     // Each strategy plays 4 matches × 10 repeats = 40 scores
     // ALLC vs ALLC, ALLC vs ALLD, ALLD vs ALLC, ALLD vs ALLD
@@ -83,7 +83,7 @@ TEST_F(TournamentTest, TotalScores_AllPositiveOrZero) {
     Tournament::Tournament tournament(strategies);
     tournament.simulateTournament();
     
-    auto& scores = tournament.getTotalScores();
+    auto& scores = tournament.getTotalPayoffs();
     
     for (const auto& [strat, scoreList] : scores) {
         for (double score : scoreList) {
@@ -207,14 +207,14 @@ TEST_F(TournamentTest, SameSeed_ProducesSameResults) {
     
     Tournament::Tournament tournament1(strategies);
     tournament1.simulateTournament();
-    auto scores1 = tournament1.getTotalScores();
+    auto scores1 = tournament1.getTotalPayoffs();
     
     // Reset seed
     GameConfig::GameConfig::seed = 123;
     
     Tournament::Tournament tournament2(strategies);
     tournament2.simulateTournament();
-    auto scores2 = tournament2.getTotalScores();
+    auto scores2 = tournament2.getTotalPayoffs();
     
     // Results should be identical
     EXPECT_EQ(scores1[StrategyTypes::ALLC].size(), scores2[StrategyTypes::ALLC].size());

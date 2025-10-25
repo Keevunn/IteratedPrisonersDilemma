@@ -12,5 +12,6 @@ namespace StrategyAgents {
         void resetAgent() override;
     private:
         bool shouldApologise = false;
+        bool apologisingNextRound = false;
     };
 }

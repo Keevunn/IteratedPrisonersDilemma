@@ -3,8 +3,7 @@
 namespace StrategyAgents {
 
     void PROBER::addToScore(const double value) {
-        if (isProbing)
-            lastPayoff = value;
+        lastPayoff = value;
         Agent::addToScore(value);
     }
 
@@ -14,7 +13,7 @@ namespace StrategyAgents {
         if (!isProbing) return noisyResponse(canExploit ? ResponseType::D : lastResponse);
 
         if (lastPayoff == GameConfig::GameConfig::payoffs[0]) canExploit = true;
-        if (canExploit && lastPayoff != GameConfig::GameConfig::payoffs[1]) canExploit = false;
+        else if (canExploit && lastPayoff != GameConfig::GameConfig::payoffs[1]) canExploit = false;
 
         return noisyResponse(probePhase[currentRound++]);
     }

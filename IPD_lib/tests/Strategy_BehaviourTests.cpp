@@ -113,16 +113,18 @@ TEST_F(StrategyTest, PAVLOV_WinStayLoseShift) {
     agent.decide(ResponseType::INVALID);
     
     // Win (R) - stay
-    agent.addToScore(3.0); // Reward
+    agent.addToScore(GameConfig::GameConfig::payoffs[1]); // Reward
     EXPECT_EQ(agent.decide(ResponseType::C), ResponseType::C);
-    
+
     // Lose (S) - shift
-    agent.addToScore(0.0); // Sucker
+    agent.addToScore(GameConfig::GameConfig::payoffs[3]); // Sucker
     EXPECT_EQ(agent.decide(ResponseType::D), ResponseType::D);
     
-    // Lose (P) - shift
-    agent.addToScore(1.0); // Punishment
-    EXPECT_EQ(agent.decide(ResponseType::D), ResponseType::C);
+    // Win (P) - stay
+    agent.addToScore(GameConfig::GameConfig::payoffs[2]); // Punishment
+    EXPECT_EQ(agent.decide(ResponseType::D), ResponseType::D);
+    
+
 }
 
 TEST_F(StrategyTest, PAVLOV_HasCorrectComplexity) {

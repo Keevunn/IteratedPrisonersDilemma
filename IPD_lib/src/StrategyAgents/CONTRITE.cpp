@@ -5,23 +5,32 @@
 namespace StrategyAgents {
 
     ResponseType CONTRITE::decide(const ResponseType& lastResponse) {
-        ResponseType original;
+        ResponseType intended;
 
-        if (shouldApologise) {
+        if (shouldApologise && lastResponse == ResponseType::C) { // Previous round resulted in DC
             shouldApologise = false;
-            original = ResponseType::C;
+            intended = ResponseType::C;
+            apologisingNextRound = true;
+        }
+        else if (apologisingNextRound && lastResponse == ResponseType::D) { // Previous round resulted in CD
+            apologisingNextRound = false;
+            intended = ResponseType::C;
         }
         else
-            original = (lastResponse == ResponseType::INVALID) ? initialResponse : lastResponse;
+            intended = (lastResponse == ResponseType::INVALID) ? initialResponse : lastResponse;
 
-        const ResponseType newResponse = noisyResponse(original);
+        const ResponseType actual = noisyResponse(intended);
 
-        if (original != newResponse) shouldApologise = true;
-        return newResponse;
+        if (intended == ResponseType::C && actual == ResponseType::D) {
+            shouldApologise = true;
+            apologisingNextRound = false;
+        }
+        return actual;
     }
 
     void CONTRITE::resetAgent() {
         Agent::resetAgent();
         shouldApologise = false;
+        apologisingNextRound = false;
     }
 }

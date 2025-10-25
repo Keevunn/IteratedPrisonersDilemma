@@ -57,7 +57,6 @@ namespace GameConfig {
     // Inline static - single definition across TUs, all initialised to default values
     class GameConfig {
     public:
-
         inline static int rounds = 100;
         inline static int repeats = 1;
         inline static int seed{};

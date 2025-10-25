@@ -29,7 +29,7 @@ TEST_F(NoiseTest, NoNoise_DeterministicOutcomes) {
     Tournament::Tournament tournament(strategies);
     tournament.simulateTournament();
     
-    auto& scores = tournament.getTotalScores();
+    auto& scores = tournament.getTotalPayoffs();
     
     // With no noise, all ALLC vs ALLD scores should be identical (0)
     // ALLC vs ALLD scores will be in indexes 50-149
@@ -146,7 +146,7 @@ TEST_F(NoiseTest, PAVLOV_BetterOverallPerformanceInNoise) {
     Tournament::Tournament tournament(strategies);
     tournament.simulateTournament();
 
-    auto& totalScores = tournament.getTotalScores();
+    auto& totalScores = tournament.getTotalPayoffs();
 
     // Calculate mean scores across all matches
     double tftMean = MathUtil::calculateMean(

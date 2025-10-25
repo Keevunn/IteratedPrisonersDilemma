@@ -10,9 +10,8 @@ namespace Results::Text {
 
         std::ostream& logResults(std::ostream& os) override;
 
-        friend std::ostream& operator<<(std::ostream& os, const std::vector<OverallStats>& rankedData);
-        friend std::ostream& operator<<(std::ostream& os, const std::map<StrategyTypes, std::vector<double>>& payoffMatrix);
-        friend std::ostream& operator<<(std::ostream& os, std::vector<double>& dataRow);
+        friend std::ostream& operator<<(std::ostream& os, std::pair<std::vector<StrategyTypes>,std::unordered_map<StrategyTypes, std::vector<double>>>& payoffMatrixData);
+        friend std::ostream& operator<<(std::ostream& os, const std::vector<double>& dataRow);
 
     };
 

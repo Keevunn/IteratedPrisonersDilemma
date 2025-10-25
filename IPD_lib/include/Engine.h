@@ -6,6 +6,7 @@
 
 #include "EvolutionaryTournament.h"
 #include "GameConfig.h"
+#include "RandomUtil.h"
 #include "Tournament.h"
 
 using namespace GameConfig::Strategies;
@@ -30,6 +31,7 @@ namespace Engine {
         Engine(const int argc, char* argv[]) {
             const std::vector<std::string_view> args(argv + 1, argv + argc);
             parseArgs(args);
+            Random::Random::seed(GameConfig::GameConfig::seed);
             if (shouldEvolve)
                 tournament = std::make_unique<Tournament::Evolution::EvolutionaryTournament>(strategies, population, generations, mutation, enableSCB);
             else

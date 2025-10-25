@@ -8,7 +8,7 @@ namespace Tournament::Evolution {
 }
 
 namespace Results {
-    inline static int defaultWidth = 15;
+    inline static int defaultWidth = 10;
     inline static int defaultPrecision = 4;
     inline static std::string divider = "------------------------------------------------------------";
 

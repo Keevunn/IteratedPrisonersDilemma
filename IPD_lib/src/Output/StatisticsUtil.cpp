@@ -10,7 +10,7 @@ namespace Statistics {
 
      std::ostream& operator<<(std::ostream& os, const OverallStatsStruct& stats) {
         os << std::left << std::setprecision(4)
-            << std::setw(15) << stats.name + ": "
+            << std::setw(10) << stats.name + ": "
             << stats.mean << ", 95% CI [" << stats.CI.first << ", " << stats.CI.second << "]";
         return os;
     }
@@ -51,8 +51,10 @@ namespace Statistics {
          return data;
     }
 
-    std::map<StrategyTypes, std::vector<double>> generatePayoffMatrix(const std::unique_ptr<Tournament::Tournament>& tournament) {
-        std::map<StrategyTypes, std::vector<double>> payoffMatrix;
+    std::pair<std::vector<StrategyTypes>,std::unordered_map<StrategyTypes, std::vector<double>>>
+                                generatePayoffMatrix(const std::unique_ptr<Tournament::Tournament>& tournament) {
+        std::unordered_map<StrategyTypes, std::vector<double>> payoffMatrix;
+         std::vector<StrategyTypes> strategies;
         const auto& matches = tournament->getMatchResults();
         const int rowLen = static_cast<int>(std::sqrt(matches.size())); // matches.size() = (num of strategies)^2
         int row = 0; int col = 0;
@@ -82,9 +84,12 @@ namespace Statistics {
                                             ? (payoffMatrix[p2Strat][row] + match.p2Mean) / 2
                                             : match.p2Mean;
 
+            // Vector stores strategies in correct order for output
+            if (strategies.size() < rowLen) strategies.push_back(p2Strat);
+
             col += 1;
         }
-        return payoffMatrix;
+        return {strategies, payoffMatrix};
     }
 
 }

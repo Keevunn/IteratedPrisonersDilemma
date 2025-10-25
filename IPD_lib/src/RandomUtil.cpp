@@ -3,7 +3,7 @@
 #include "../include/GameConfig.h"
 
 namespace Random {
-    std::mt19937 Random::generator (GameConfig::GameConfig::seed);
+    std::mt19937 Random::generator(GameConfig::GameConfig::seed);
 
     void Random::seed(const unsigned int seed) {
         generator.seed(seed);
