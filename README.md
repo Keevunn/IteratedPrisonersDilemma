@@ -46,7 +46,7 @@ Implemented strategies include:
 - **ALLD**: Always Defect
 - **TFT**: Tit-for-Tat
 - **GRIM**: Grim Trigger
-- **RND(p): Random strategy with configurable cooperation probability
+- **RND(p)**: Random strategy with configurable cooperation probability
 - **PAVLOV**: Win-stay, Lose-shift
 - **CONTRITE/CTFT**: Contrite Tit-for-Tat
 - **PROBER**: Probing Tit-for-Tat variant
